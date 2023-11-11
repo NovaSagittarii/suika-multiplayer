@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
+import PIXIStage from './Stage';
 
 const RAPIER = await import('@dimforge/rapier2d');
 
@@ -10,6 +11,7 @@ function App() {
     const socket = io({ transports: ['websocket'] });
 
     socket.emit('message', 'hello');
+    socket.on('message', (data) => console.info('[sockets]', data));
 
     return () => {
       socket.disconnect();
@@ -29,6 +31,7 @@ function App() {
       <p className='read-the-docs'>
         Click on the Vite and React logos to learn more
       </p>
+      <PIXIStage />
     </div>
   );
 }
