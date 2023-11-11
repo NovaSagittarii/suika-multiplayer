@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
+const RAPIER = await import('@dimforge/rapier2d');
+
 function App() {
   const [count, setCount] = useState(0);
 
