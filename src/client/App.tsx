@@ -3,9 +3,14 @@ import { io } from 'socket.io-client';
 import PIXIStage from './Stage';
 
 const RAPIER = await import('@dimforge/rapier2d');
+import { suika } from '../lib/proto';
 
 function App() {
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log(suika);
+  });
 
   useEffect(() => {
     const socket = io({ transports: ['websocket'] });

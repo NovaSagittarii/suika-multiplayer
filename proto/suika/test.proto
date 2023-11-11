@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package suika;
+
+/** 
+ * Test object
+*/
+message Test {
+  int32 n = 1;
+  string s = 2;
+}
