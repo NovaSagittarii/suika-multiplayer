@@ -23,10 +23,18 @@ export default class EventQueue {
     this.eventBuffer = [];
   }
 
+  /**
+   * add event to queue
+   * @param newEvent event to be pushed onto the buffer
+   */
   push(newEvent: suika.event.game.GameEvent): void {
     this.eventBuffer.push(newEvent);
   }
 
+  /**
+   * pop front event from queue
+   * @throws 'invalid pop operation' if no valid front element found
+   */
   pop(): void {
     const eventToRemove = this.front();
     if (eventToRemove !== null) {
@@ -42,6 +50,10 @@ export default class EventQueue {
     }
   }
 
+  /**
+   * gets the front event from the buffer safely
+   * @returns front event or nullf if none
+   */
   front(): suika.event.game.GameEvent | null {
     if (this.frontCache !== null) {
       return this.frontCache;
@@ -58,14 +70,26 @@ export default class EventQueue {
     }
   }
 
+  /**
+   * get last event popped tick
+   * @returns tick of last event popped
+   */
   lastTick(): number {
     return this.lastEventPoppedTick;
   }
 
+  /**
+   * check if buffer is empty
+   * @returns if buffer is empty
+   */
   empty(): boolean {
     return this.eventBuffer.length === 0;
   }
 
+  /**
+   * if expected event is in queue
+   * @returns true if expected front is in buffer
+   */
   canPop(): boolean {
     return this.front() !== null;
   }
