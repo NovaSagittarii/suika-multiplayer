@@ -7,6 +7,11 @@ const Rapier = await import('@dimforge/rapier2d');
  * Wall (rectangle)
  */
 export default class Wall extends StaticEntity {
+  public readonly x: number;
+  public readonly y: number;
+  public readonly hx: number;
+  public readonly hy: number;
+
   /**
    *
    * @param world the world to create the wall (static rectangle collider) in
@@ -27,5 +32,9 @@ export default class Wall extends StaticEntity {
       .setFriction(0.0)
       .setRestitution(0.5);
     super(world, colliderDesc);
+    this.x = x;
+    this.y = y;
+    this.hx = hx;
+    this.hy = hy;
   }
 }

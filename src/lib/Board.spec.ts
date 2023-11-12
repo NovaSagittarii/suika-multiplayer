@@ -13,7 +13,7 @@ test('testing gravity', () => {
   for (let t = 0; t < 50; ++t) {
     board.step();
     // console.log(t, ball.translation());
-    expect(ball.translation().y).lessThan(prev, "ball should be falling");
+    expect(ball.translation().y).lessThan(prev, 'ball should be falling');
     prev = ball.translation().y;
   }
 
@@ -22,6 +22,12 @@ test('testing gravity', () => {
     board.step();
   }
 
-  expect(ball.translation().y).lessThan(-9.94, "should be resting on the bottom now");
-  expect(ball.translation().y).greaterThan(-10, "should not have passed through the bottom");
+  expect(ball.translation().y).lessThan(
+    -9.94,
+    'should be resting on the bottom now',
+  );
+  expect(ball.translation().y).greaterThan(
+    -10,
+    'should not have passed through the bottom',
+  );
 });

@@ -1,6 +1,8 @@
 import { BlurFilter, TextStyle } from 'pixi.js';
 import { Stage, Container, Sprite, Text } from '@pixi/react';
 import { useMemo } from 'react';
+import PIXIBoard from './PIXIBoard';
+import Board from '../lib/Board';
 
 export default function PIXIStage() {
   const blurFilter = useMemo(() => new BlurFilter(4), []);

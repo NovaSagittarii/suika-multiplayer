@@ -17,8 +17,27 @@ export default class Board {
   private ticks: number = 0;
   private events: number = 0;
 
+  private width: number = 0;
+  private height: number = 0;
+
   constructor() {
     this.world = new Rapier.World(new Rapier.Vector2(0, -9.81));
+  }
+
+  getWalls() {
+    return this.walls;
+  }
+
+  getBalls() {
+    return this.balls;
+  }
+
+  getWidth() {
+    return this.width;
+  }
+
+  getHeight() {
+    return this.height;
   }
 
   /**
@@ -32,6 +51,8 @@ export default class Board {
     this.walls.push(new Wall(this.world, -width / 2 - 1, 0, 1, height * 2));
     this.walls.push(new Wall(this.world, width / 2 + 1, 0, 1, height * 2));
     this.walls.push(new Wall(this.world, 0, -height - 1, width, 1));
+    this.width = width;
+    this.height = height;
   }
 
   /**

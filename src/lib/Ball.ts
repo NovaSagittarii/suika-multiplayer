@@ -13,10 +13,12 @@ export default class Ball extends DynamicEntity {
   public readonly x: number;
   public readonly y: number;
   public readonly type: number;
+  public readonly radius: number;
 
   constructor(world: RAPIER.World, x: number, y: number, type: number) {
+    const radius = typeToRadius[type];
     const rigidBodyDesc = Rapier.RigidBodyDesc.dynamic().setTranslation(x, y);
-    const colliderDesc = Rapier.ColliderDesc.ball(typeToRadius[type])
+    const colliderDesc = Rapier.ColliderDesc.ball(radius)
       .setFriction(0.5)
       .setRestitution(0.0);
     super(world, rigidBodyDesc, colliderDesc);
@@ -25,5 +27,6 @@ export default class Ball extends DynamicEntity {
     this.x = x;
     this.y = y;
     this.type = type;
+    this.radius = radius;
   }
 }

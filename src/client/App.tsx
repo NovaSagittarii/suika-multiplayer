@@ -1,16 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import PIXIStage from './Stage';
+import { Stage, Container, Sprite, Text } from '@pixi/react';
 
-const RAPIER = await import('@dimforge/rapier2d');
 import { suika } from '../lib/proto';
+import Board from '../lib/Board';
+import PIXIBoard from './PIXIBoard';
+import Ball from '../lib/Ball';
+
+const rboard = new Board();
+rboard.initialize(0, 5, 5);
+const rball = rboard.placeBall(0, 0);
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [board, setBoard] = useState<Board | null>(null);
+  const [ball, setBall] = useState<Ball | null>(null);
 
   useEffect(() => {
-    console.log(suika);
-  });
+    setInterval(() => {
+      setBoard(rboard);
+      setBall(rball);
+    }, 50);
+  }, []);
 
   useEffect(() => {
     const socket = io({ transports: ['websocket'] });
@@ -23,20 +33,23 @@ function App() {
     };
   }, []);
 
+  const stepBoard = useCallback(() => {
+    console.log('hello?', board);
+    board?.step();
+    setBoard(board);
+    console.log(ball?.translation());
+  }, [board]);
+
   return (
     <div className='App'>
       <div className='card'>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <button onClick={stepBoard}>step</button>
       </div>
       <p className='read-the-docs'>
         Click on the Vite and React logos to learn more
       </p>
-      <PIXIStage />
+      {/* <PIXIStage /> */}
+      <Stage>{board && <PIXIBoard board={board} />}</Stage>
     </div>
   );
 }
