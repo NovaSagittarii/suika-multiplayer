@@ -14,7 +14,7 @@ export default class Board {
   private score: number = 0;
   private ballsPlaced: number = 0;
   private seed: number = -1;
-  
+
   private ticks: number = 0;
   private events: number = 0;
 
@@ -29,10 +29,10 @@ export default class Board {
    * @param height height of the board in meters
    */
   initialize(seed: number, width: number, height: number) {
-    this.seed = seed|0;
-    this.walls.push(new Wall(this.world, -width/2-1, 0, 1, height*2));
-    this.walls.push(new Wall(this.world,  width/2+1, 0, 1, height*2));
-    this.walls.push(new Wall(this.world, 0, height+1, width, 1));
+    this.seed = seed | 0;
+    this.walls.push(new Wall(this.world, -width / 2 - 1, 0, 1, height * 2));
+    this.walls.push(new Wall(this.world, width / 2 + 1, 0, 1, height * 2));
+    this.walls.push(new Wall(this.world, 0, height + 1, width, 1));
   }
 
   /**
@@ -49,8 +49,25 @@ export default class Board {
    * @param x where along the x-axis to place the next ball
    * @param ball what ball id to use
    */
-  placeBall(x: number, ball: 0|1|2|3|4|5|6|7|8|9|10) {
+  placeBall(x: number, ball: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) {
     const radius = 0.05;
-    this.balls.push(new Ball(this.world, x, -radius, radius));
+    this.balls.push(new Ball(this.world, x, 0, ball));
+  }
+
+  /**
+   * merges two balls
+   * @param ball1 first ball to merge
+   * @param ball2 second ball to merge
+   */
+  mergeBalls(ball1: Ball, ball2: Ball) {
+    if (ball1.type !== ball2.type) {
+      throw new Error('cannot merge balls of different types');
+    }
+    const type = ball1.type;
+    const x = (ball1.x + ball2.x) / 2;
+    const y = (ball1.y + ball2.y) / 2;
+    this.balls.splice(this.balls.indexOf(ball1), 1);
+    this.balls.splice(this.balls.indexOf(ball2), 1);
+    this.balls.push(new Ball(this.world, x, y, type + 1));
   }
 }
