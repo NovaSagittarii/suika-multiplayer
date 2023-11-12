@@ -7,9 +7,8 @@ const Rapier = await import('@dimforge/rapier2d');
 
 export default class Board {
   private world: RAPIER.World;
-  private balls: Ball[] = [];
+  private balls: ColliderHandlerMap = new Map();
   private walls: Wall[] = [];
-  private handlers: ColliderHandlerMap = new Map();
 
   private score: number = 0;
   private ballsPlaced: number = 0;
@@ -51,7 +50,7 @@ export default class Board {
    */
   placeBall(x: number, ball_type: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) {
     const ball = new Ball(this.world, x, 0.5, ball_type);
-    this.balls.push(ball);
+    ball.attachCollider(this.balls);
     return ball;
   }
 
@@ -62,8 +61,8 @@ export default class Board {
     const eventQueue = new Rapier.EventQueue(true);
     this.world.step(eventQueue);
     eventQueue.drainCollisionEvents((handle1, handle2, started) => {
-      const o1 = this.handlers.get(handle1);
-      const o2 = this.handlers.get(handle2);
+      const o1 = this.balls.get(handle1);
+      const o2 = this.balls.get(handle2);
       /* Handle collision event. */
     });
     eventQueue.drainContactForceEvents((event) => {
@@ -85,8 +84,9 @@ export default class Board {
     const type = ball1.type;
     const x = (ball1.x + ball2.x) / 2;
     const y = (ball1.y + ball2.y) / 2;
-    this.balls.splice(this.balls.indexOf(ball1), 1);
-    this.balls.splice(this.balls.indexOf(ball2), 1);
-    this.balls.push(new Ball(this.world, x, y, type + 1));
+    ball1.dispose();
+    ball2.dispose();
+    const newBall = new Ball(this.world, x, y, type + 1);
+    newBall.attachCollider(this.balls);
   }
 }
