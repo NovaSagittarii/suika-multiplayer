@@ -8,14 +8,20 @@ const Rapier = await import('@dimforge/rapier2d');
  */
 export default class Wall extends StaticEntity {
   /**
-   * 
+   *
    * @param world the world to create the wall (static rectangle collider) in
    * @param x x-position
    * @param y y-position
    * @param hx The half-width of the rectangle along its local x axis
    * @param hy The half-width of the rectangle along its local y axis
    */
-  constructor(world: RAPIER.World, x: number, y: number, hx: number, hy: number) {
+  constructor(
+    world: RAPIER.World,
+    x: number,
+    y: number,
+    hx: number,
+    hy: number,
+  ) {
     const colliderDesc = Rapier.ColliderDesc.cuboid(hx, hy)
       .setTranslation(x, y)
       .setFriction(0.0)

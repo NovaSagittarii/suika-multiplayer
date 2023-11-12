@@ -11,8 +11,9 @@
     "start:dev": "cross-env APP_PORT=3000 node -r ts-node/register index.ts",
     "dev": "npm run build:proto && npm run start:dev",
     "format": "cross-env NODE_OPTIONS=--loader=ts-node/esm npx prettier --write .",
-    "check": "NODE_OPTIONS=--loader=ts-node/esm npx prettier --check .",
-    "test": "vitest"
+    "check": "cross-env NODE_OPTIONS=--loader=ts-node/esm npx prettier --check .",
+    "test": "vitest",
+    "test:chrome": "vitest --browser='chrome'"
   },
   "repository": {
     "type": "git",
@@ -41,6 +42,7 @@
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-react": "^4.1.1",
+    "@vitest/browser": "^0.34.6",
     "cross-env": "^7.0.3",
     "prettier": "^3.0.3",
     "protobufjs": "^7.2.5",
@@ -51,6 +53,7 @@
     "ts-protoc-gen": "^0.15.0",
     "typescript": "^5.2.2",
     "vite": "^4.5.0",
-    "vitest": "^0.34.6"
+    "vitest": "^0.34.6",
+    "webdriverio": "^8.22.1"
   }
 }

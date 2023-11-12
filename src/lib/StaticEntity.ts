@@ -18,10 +18,7 @@ export default class StaticEntity extends DisposableEntity {
    */
   // private elementOf: ColliderHandlerMap[] = [];
 
-  constructor(
-    world: RAPIER.World,
-    colliderDesc: RAPIER.ColliderDesc,
-  ) {
+  constructor(world: RAPIER.World, colliderDesc: RAPIER.ColliderDesc) {
     super();
     this.world = world;
     this.colliderDesc = colliderDesc;
@@ -33,7 +30,7 @@ export default class StaticEntity extends DisposableEntity {
     // for (const colliderHandlerMap of this.elementOf) {
     //   colliderHandlerMap.delete(this.collider.handle);
     // }
-    
+
     // this collider is never attached to a rigid body
     this.world.removeCollider(this.collider, false);
     return true;

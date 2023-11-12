@@ -54,4 +54,8 @@ export default class DynamicEntity extends DisposableEntity {
     colliderHandlerMap.set(this.collider.handle, this);
     this.elementOf.push(colliderHandlerMap);
   }
+
+  translation() {
+    return this.rigidBody.translation();
+  }
 }
