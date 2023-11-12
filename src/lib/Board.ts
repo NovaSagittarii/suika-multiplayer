@@ -73,4 +73,21 @@ export default class Board {
       /* Handle the contact force event. */
     });
   }
+
+  /**
+   * merges two balls
+   * @param ball1 first ball to merge
+   * @param ball2 second ball to merge
+   */
+  mergeBalls(ball1: Ball, ball2: Ball) {
+    if (ball1.type !== ball2.type) {
+      throw new Error('cannot merge balls of different types');
+    }
+    const type = ball1.type;
+    const x = (ball1.x + ball2.x) / 2;
+    const y = (ball1.y + ball2.y) / 2;
+    this.balls.splice(this.balls.indexOf(ball1), 1);
+    this.balls.splice(this.balls.indexOf(ball2), 1);
+    this.balls.push(new Ball(this.world, x, y, type + 1));
+  }
 }
