@@ -29,10 +29,12 @@ export default class EventQueue {
 
   pop(): void {
     const eventToRemove = this.front();
-    if (eventToRemove != null) {
+    if (eventToRemove !== null) {
       const indexToRemove = this.eventBuffer.indexOf(eventToRemove);
       this.eventBuffer.splice(indexToRemove, 1);
 
+      // Update State
+      this.lastEventPoppedTick = eventToRemove.ticks;
       this.currentEventNumber += 1;
       this.frontCache = null;
     } else {
@@ -41,7 +43,7 @@ export default class EventQueue {
   }
 
   front(): suika.event.game.GameEvent | null {
-    if (this.frontCache != null) {
+    if (this.frontCache !== null) {
       return this.frontCache;
     } else {
       const frontEvent =
@@ -65,6 +67,6 @@ export default class EventQueue {
   }
 
   canPop(): boolean {
-    return this.front() != null;
+    return this.front() !== null;
   }
 }

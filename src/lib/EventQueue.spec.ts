@@ -32,3 +32,14 @@ test('eventqueue example', () => {
   eq.pop();
   expect(eq.front()).toBe(null);
 });
+
+test('eventqueue empty front', () => {
+  const eq = new EventQueue();
+
+  expect(eq.front()).toBe(null);
+});
+
+test('eventqueue empty pop', () => {
+  const eq = new EventQueue();
+  expect(() => eq.pop()).toThrowError('invalid pop operation');
+});
