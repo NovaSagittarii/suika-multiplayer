@@ -6,6 +6,9 @@ import { suika } from '../lib/proto';
 import Board from '../lib/Board';
 import PIXIBoard from './PIXIBoard';
 import Ball, { BallRenderProps } from '../lib/Ball';
+import Wall from '../lib/Wall';
+import PIXIWall from './PIXIWall';
+import PIXIBall from './PIXIBall';
 
 const board = new Board();
 board.initialize(0, 5, 5);
@@ -14,11 +17,13 @@ const ball = board.placeBall(0, 0);
 function App() {
   const requestRef = useRef<number>(0);
   const [balls, setBalls] = useState<BallRenderProps[]>([]);
+  const [mousePosition, setMousePosition] = useState([0, 0]);
 
   const animate = (time: number) => {
     // The 'state' will always be the initial value here
     requestRef.current = requestAnimationFrame(animate);
     setBalls(board.getBalls());
+    board.step();
   };
 
   useEffect(() => {
@@ -51,13 +56,25 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
       {/* <PIXIStage /> */}
-      <Stage>
+      <Stage onMouseMove={(e) => {
+          const {clientX, clientY} = e;
+          const x = clientX - e.currentTarget.offsetLeft;
+          const y = clientY - e.currentTarget.offsetTop;
+          // console.log(clientX, e.currentTarget.offsetLeft, x);
+          setMousePosition([x/50, y/50]);
+        }}
+        onMouseDown={() => {
+          board.place(mousePosition[0]-board.getWidth());
+        }}
+      >
         {board && 
           <PIXIBoard 
             width={board.getWidth()} 
             height={board.getHeight()}
             balls={balls}
             walls={board.getWalls()}
+            nextX={mousePosition[0]-board.getWidth()}
+            nextRadius={0.2}
           />
         }
       </Stage>

@@ -3,7 +3,7 @@ import DynamicEntity from './DynamicEntity';
 import * as RAPIER from '@dimforge/rapier2d/rapier';
 const Rapier = await import('@dimforge/rapier2d');
 
-const typeToRadius = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5];
+const typeToRadius = [0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7];
 
 /**
  * Ball physics object
