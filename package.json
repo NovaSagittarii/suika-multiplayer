@@ -13,7 +13,7 @@
     "format": "cross-env NODE_OPTIONS=--loader=ts-node/esm npx prettier --write .",
     "check": "cross-env NODE_OPTIONS=--loader=ts-node/esm npx prettier --check .",
     "test": "vitest",
-    "test:chrome": "vitest --browser='chrome'"
+    "test:chrome": "vitest --browser=chrome"
   },
   "repository": {
     "type": "git",
