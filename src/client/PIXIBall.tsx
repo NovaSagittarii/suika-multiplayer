@@ -2,18 +2,21 @@ import * as PIXI from 'pixi.js';
 import { Container, Graphics } from '@pixi/react';
 import { useCallback, useEffect, useState } from 'react';
 
-import Ball from '../lib/Ball';
+import Ball, { BallRenderProps } from '../lib/Ball';
 
-export type PIXIBallProps = { ball: Ball };
-export default function PIXIBall({ ball }: PIXIBallProps) {
+export type PIXIBallProps = {
+  props: BallRenderProps;
+}
+export default function PIXIBall({ props }: PIXIBallProps) {
+  const { x, y, radius } = props;
   const draw = useCallback(
     (g: PIXI.Graphics) => {
       g.clear();
       g.beginFill(0xff0000);
-      g.drawCircle(ball.translation().x, ball.translation().y, ball.radius);
+      g.drawCircle(x, y, radius);
       g.scale.set(50);
     },
-    [ball.translation().x, ball.translation().y],
+    [x, y],
   );
 
   return <Graphics draw={draw} />;

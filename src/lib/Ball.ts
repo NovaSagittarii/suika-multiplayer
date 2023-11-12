@@ -10,8 +10,6 @@ const typeToRadius = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5];
  */
 export default class Ball extends DynamicEntity {
   public readonly world: RAPIER.World;
-  public readonly x: number;
-  public readonly y: number;
   public readonly type: number;
   public readonly radius: number;
 
@@ -24,9 +22,25 @@ export default class Ball extends DynamicEntity {
     super(world, rigidBodyDesc, colliderDesc);
 
     this.world = world;
-    this.x = x;
-    this.y = y;
     this.type = type;
     this.radius = radius;
   }
+
+  public renderProps(): BallRenderProps {
+    const { x, y } = this.translation();
+    return {
+      x,
+      y,
+      radius: this.radius,
+    };
+  }
 }
+
+/**
+ * properties needed for rendered
+ */
+export type BallRenderProps = {
+  x: number;
+  y: number;
+  radius: number;
+};

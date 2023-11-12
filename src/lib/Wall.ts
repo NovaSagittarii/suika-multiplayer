@@ -37,4 +37,23 @@ export default class Wall extends StaticEntity {
     this.hx = hx;
     this.hy = hy;
   }
+
+  public renderProps(): WallRenderProps {
+    return {
+      x: this.x,
+      y: this.y,
+      hx: this.hx,
+      hy: this.hy,
+    };
+  }
 }
+
+/**
+ * properties needed for rendering wall
+ */
+export type WallRenderProps = {
+  x: number;
+  y: number;
+  hx: number;
+  hy: number;
+};

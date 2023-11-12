@@ -25,11 +25,15 @@ export default class Board {
   }
 
   getWalls() {
-    return this.walls;
+    return this.walls.map((wall) => wall.renderProps());
   }
 
   getBalls() {
-    return this.balls;
+    const balls = [];
+    for (const ball of this.balls.values()) {
+      balls.push((ball as Ball).renderProps());
+    }
+    return balls;
   }
 
   getWidth() {
@@ -103,8 +107,8 @@ export default class Board {
       throw new Error('cannot merge balls of different types');
     }
     const type = ball1.type;
-    const x = (ball1.x + ball2.x) / 2;
-    const y = (ball1.y + ball2.y) / 2;
+    const x = (ball1.translation().x + ball2.translation().y) / 2;
+    const y = (ball1.translation().x + ball2.translation().y) / 2;
     ball1.dispose();
     ball2.dispose();
     const newBall = new Ball(this.world, x, y, type + 1);

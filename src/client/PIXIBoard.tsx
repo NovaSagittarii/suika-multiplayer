@@ -3,23 +3,29 @@ import { useCallback, useEffect, useState } from 'react';
 import * as PIXI from 'pixi.js';
 
 import Board from '../lib/Board';
-import Ball from '../lib/Ball';
+import Ball, { BallRenderProps } from '../lib/Ball';
 import PIXIWall from './PIXIWall';
 import PIXIBall from './PIXIBall';
+import { WallRenderProps } from '../lib/Wall';
 
-export type PIXIBoardProps = { board: Board };
-export default function PIXIBoard({ board }: PIXIBoardProps) {
+export type PIXIBoardProps = {
+  width: number,
+  height: number,
+  balls: BallRenderProps[],
+  walls: WallRenderProps[],
+ };
+export default function PIXIBoard({ width, height, balls, walls }: PIXIBoardProps) {
   return (
     <Container
       scale={[1, -1]}
-      x={board.getWidth() * 50}
-      y={board.getHeight() * 10}
+      x={width * 50}
+      y={height * 10}
     >
-      {board.getWalls().map((wall, index) => (
-        <PIXIWall wall={wall} key={index} />
+      {walls.map((wall, index) => (
+        <PIXIWall props={wall} key={index} />
       ))}
-      {[...board.getBalls().values()].map((ball, index) => (
-        <PIXIBall ball={ball as Ball} key={index} />
+      {balls.map((ball, index) => (
+        <PIXIBall props={ball} key={index} />
       ))}
     </Container>
   );
