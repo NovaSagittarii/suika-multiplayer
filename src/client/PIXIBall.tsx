@@ -16,7 +16,7 @@ export default function PIXIBall({ props }: PIXIBallProps) {
       g.drawCircle(x, y, radius);
       g.scale.set(50);
     },
-    [x, y],
+    [x, y, radius],
   );
 
   return <Graphics draw={draw} />;
