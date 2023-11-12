@@ -9,7 +9,7 @@ export default class EventQueue {
   private lastEventPoppedTick: number;
 
   // Cache
-  private frontCache: suika.event.game.GameEvent | undefined;
+  private frontCache: suika.event.game.GameEvent | null;
 
   // Buffer
   private eventBuffer: Array<suika.event.game.GameEvent>;
@@ -17,6 +17,8 @@ export default class EventQueue {
   constructor() {
     this.currentEventNumber = 0;
     this.lastEventPoppedTick = 0;
+
+    this.frontCache = null;
 
     this.eventBuffer = [];
   }
@@ -27,21 +29,25 @@ export default class EventQueue {
 
   pop(): void {
     const eventToRemove = this.front();
-    if (eventToRemove) {
+    if (eventToRemove != null) {
       const indexToRemove = this.eventBuffer.indexOf(eventToRemove);
       this.eventBuffer.splice(indexToRemove, 1);
+
+      this.currentEventNumber += 1;
+      this.frontCache = null;
     } else {
       throw 'invalid pop operation';
     }
   }
 
-  front(): suika.event.game.GameEvent | undefined {
-    if (this.frontCache) {
+  front(): suika.event.game.GameEvent | null {
+    if (this.frontCache != null) {
       return this.frontCache;
     } else {
-      const frontEvent = this.eventBuffer.find(
-        (iterEvent) => iterEvent.id === this.currentEventNumber,
-      );
+      const frontEvent =
+        this.eventBuffer.find(
+          (iterEvent) => iterEvent.id === this.currentEventNumber,
+        ) || null;
       if (frontEvent) {
         this.frontCache = frontEvent;
       }
@@ -59,6 +65,6 @@ export default class EventQueue {
   }
 
   canPop(): boolean {
-    return this.front() != undefined;
+    return this.front() != null;
   }
 }

@@ -2,4 +2,33 @@ import { expect, test } from 'vitest';
 import EventQueue from './EventQueue';
 import { suika } from './proto';
 
-test('eventqueue example', () => {});
+test('eventqueue example', () => {
+  // Arrange
+  const eq = new EventQueue();
+
+  const a = suika.event.game.GameEvent.create();
+  a.id = 0;
+
+  const b = suika.event.game.GameEvent.create();
+  b.id = 1;
+
+  const c = suika.event.game.GameEvent.create();
+  c.id = 2;
+
+  // Act
+  eq.push(a);
+  eq.push(c);
+  eq.push(b);
+
+  // Assert
+  expect(eq.front()).toBe(a);
+
+  eq.pop();
+  expect(eq.front()).toBe(b);
+
+  eq.pop();
+  expect(eq.front()).toBe(c);
+
+  eq.pop();
+  expect(eq.front()).toBe(null);
+});
