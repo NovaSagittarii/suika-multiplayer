@@ -1,4 +1,4 @@
-import ColliderEntity from './ColliderEntity';
+import DynamicEntity from './DynamicEntity';
 
 import * as RAPIER from '@dimforge/rapier2d/rapier';
 const Rapier = await import('@dimforge/rapier2d');
@@ -6,7 +6,7 @@ const Rapier = await import('@dimforge/rapier2d');
 /**
  * Ball physics object
  */
-export default class Ball extends ColliderEntity {
+export default class Ball extends DynamicEntity {
   constructor(world: RAPIER.World, x: number, y: number, radius: number) {
     const rigidBodyDesc = Rapier.RigidBodyDesc.dynamic().setTranslation(x, y);
     const colliderDesc = Rapier.ColliderDesc.ball(radius)

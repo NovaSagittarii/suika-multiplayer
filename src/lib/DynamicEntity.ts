@@ -3,7 +3,15 @@ import DisposableEntity from './DisposableEntity';
 import * as RAPIER from '@dimforge/rapier2d/rapier';
 const Rapier = await import('@dimforge/rapier2d');
 
-export default class ColliderEntity extends DisposableEntity {
+/**
+ * Maps collider handlers (number) to the entity they're a part of
+ */
+export type ColliderHandlerMap = Map<number, DynamicEntity>;
+
+/**
+ * wrapper class for rigidbody + collider objects in rapier
+ */
+export default class DynamicEntity extends DisposableEntity {
   protected rigidBodyDesc: RAPIER.RigidBodyDesc;
   protected rigidBody: RAPIER.RigidBody;
   protected colliderDesc: RAPIER.ColliderDesc;
@@ -13,7 +21,7 @@ export default class ColliderEntity extends DisposableEntity {
   /**
    * list of collider maps this Collider is a part of
    */
-  private elementOf: Record<number, ColliderEntity>[] = [];
+  private elementOf: ColliderHandlerMap[] = [];
 
   constructor(
     world: RAPIER.World,
@@ -30,8 +38,9 @@ export default class ColliderEntity extends DisposableEntity {
 
   dispose() {
     if (super.dispose()) return false;
-    for (const dictionary of this.elementOf)
-      delete dictionary[this.collider.handle];
+    for (const colliderHandlerMap of this.elementOf) {
+      colliderHandlerMap.delete(this.collider.handle);
+    }
     this.world.removeRigidBody(this.rigidBody);
     return true;
   }
@@ -39,10 +48,10 @@ export default class ColliderEntity extends DisposableEntity {
   /**
    * Attaches object to a lookup table when dealing with collider handles,
    * automatically cleans up after itself when disposed of.
-   * @param dictionary what `Record<number, ColliderEntity>` map to attach this to
+   * @param dictionary what `ColliderHandlerMap` map to attach this to
    */
-  attachCollider(dictionary: Record<number, ColliderEntity>) {
-    dictionary[this.collider.handle] = this;
-    this.elementOf.push(dictionary);
+  attachCollider(colliderHandlerMap: ColliderHandlerMap) {
+    colliderHandlerMap.set(this.collider.handle, this);
+    this.elementOf.push(colliderHandlerMap);
   }
 }

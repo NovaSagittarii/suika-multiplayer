@@ -2,6 +2,15 @@ syntax = "proto3";
 
 package suika.event.game;
 
+/**
+ * Event that has the configuration for board initialization
+ */
+message Initialize {
+  int32 seed = 1;
+  int32 width = 2;
+  int32 height = 3;
+}
+
 /** 
  * Event for placing a ball (what you placed should be tracked by the set seed in the game instance)
  */
