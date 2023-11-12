@@ -32,7 +32,7 @@ export default class Board {
     this.seed = seed | 0;
     this.walls.push(new Wall(this.world, -width / 2 - 1, 0, 1, height * 2));
     this.walls.push(new Wall(this.world, width / 2 + 1, 0, 1, height * 2));
-    this.walls.push(new Wall(this.world, 0, height + 1, width, 1));
+    this.walls.push(new Wall(this.world, 0, -height - 1, width, 1));
   }
 
   /**
@@ -50,8 +50,7 @@ export default class Board {
    * @param ball_type what ball type to use
    */
   placeBall(x: number, ball_type: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) {
-    const radius = 0.05;
-    const ball = new Ball(this.world, x, -radius, radius);
+    const ball = new Ball(this.world, x, 0.5, ball_type);
     this.balls.push(ball);
     return ball;
   }
