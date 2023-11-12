@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package suika.event.game;
+
+/** 
+ * Event for placing a ball (what you placed should be tracked by the set seed in the game instance)
+ */
+message Place {
+  /// x-coordinate of where center of ball should be placed
+  int32 x = 1;
+}
+
+/**
+ * Event when garbage should be recieved
+ */
+message Receive {
+  /// how many units of damage (no damage table yet lol)
+  int32 damage = 1;
+}
+
+/**
+ * TODO: Event to change targeting strategy
+ */
