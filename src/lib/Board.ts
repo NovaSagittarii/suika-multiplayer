@@ -112,8 +112,8 @@ export default class Board {
       throw new Error('cannot merge balls of different types');
     }
     const type = ball1.type;
-    const x = (ball1.translation().x + ball2.translation().x) / 2;
-    const y = (ball1.translation().y + ball2.translation().y) / 2;
+    const lowercoords = ball1.translation().y < ball2.translation().y ? ball1.translation() : ball2.translation();
+    const {x, y} = lowercoords;
     ball1.dispose();
     ball2.dispose();
     const newBall = new Ball(this.world, x, y, type + 1);
