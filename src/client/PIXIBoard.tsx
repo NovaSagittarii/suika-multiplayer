@@ -41,6 +41,7 @@ export default function PIXIBoard({
         props={{
           x: constrain(nextX, -width / 2 + nextRadius, width / 2 - nextRadius),
           y: 0.5,
+          theta: 0,
           radius: nextRadius,
         }}
       />
