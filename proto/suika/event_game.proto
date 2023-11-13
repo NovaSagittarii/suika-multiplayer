@@ -20,6 +20,18 @@ message Place {
 }
 
 /**
+ * Event when the ball to place location has changed (or hasn't)
+ * used for responsiveness and also as a heartbeat
+ */
+message Placing {
+  /**
+   * x-coordinate of where the center of the NEXT ball should be placed.
+   * this value can change repeatedly.
+   */
+  int32 x = 1;
+}
+
+/**
  * Event when garbage should be recieved
  */
 message Receive {

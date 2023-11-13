@@ -19,6 +19,7 @@ message GameEvent {
 
   oneof event {
     suika.event.game.Place place = 4;
-    suika.event.game.Receive receive = 5;
+    suika.event.game.Placing placing = 5;
+    suika.event.game.Receive receive = 6;
   }
 }
