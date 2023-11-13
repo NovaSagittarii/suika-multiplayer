@@ -86,9 +86,14 @@ export default class Board {
     const eventQueue = new Rapier.EventQueue(true);
     this.world.step(eventQueue);
     eventQueue.drainCollisionEvents((handle1, handle2, started) => {
-      const o1 = this.balls.get(handle1);
-      const o2 = this.balls.get(handle2);
+      if (!this.balls.has(handle1) || !this.balls.has(handle2)) return;
+      const o1 = this.balls.get(handle1) as Ball;
+      const o2 = this.balls.get(handle2) as Ball;
       /* Handle collision event. */
+      // console.log(started ? 'together' : 'apart', o1, o2);
+      if (started) {
+        this.mergeBalls(o1, o2);
+      }
     });
     eventQueue.drainContactForceEvents((event) => {
       let handle1 = event.collider1(); // Handle of the first collider involved in the event.
@@ -107,8 +112,8 @@ export default class Board {
       throw new Error('cannot merge balls of different types');
     }
     const type = ball1.type;
-    const x = (ball1.translation().x + ball2.translation().y) / 2;
-    const y = (ball1.translation().x + ball2.translation().y) / 2;
+    const x = (ball1.translation().x + ball2.translation().x) / 2;
+    const y = (ball1.translation().y + ball2.translation().y) / 2;
     ball1.dispose();
     ball2.dispose();
     const newBall = new Ball(this.world, x, y, type + 1);

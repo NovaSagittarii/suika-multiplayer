@@ -56,27 +56,28 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
       {/* <PIXIStage /> */}
-      <Stage onMouseMove={(e) => {
-          const {clientX, clientY} = e;
+      <Stage
+        onMouseMove={(e) => {
+          const { clientX, clientY } = e;
           const x = clientX - e.currentTarget.offsetLeft;
           const y = clientY - e.currentTarget.offsetTop;
           // console.log(clientX, e.currentTarget.offsetLeft, x);
-          setMousePosition([x/50, y/50]);
+          setMousePosition([x / 50, y / 50]);
         }}
         onMouseDown={() => {
-          board.place(mousePosition[0]-board.getWidth());
+          board.place(mousePosition[0] - board.getWidth());
         }}
       >
-        {board && 
-          <PIXIBoard 
-            width={board.getWidth()} 
+        {board && (
+          <PIXIBoard
+            width={board.getWidth()}
             height={board.getHeight()}
             balls={balls}
             walls={board.getWalls()}
-            nextX={mousePosition[0]-board.getWidth()}
+            nextX={mousePosition[0] - board.getWidth()}
             nextRadius={0.2}
           />
-        }
+        )}
       </Stage>
     </div>
   );

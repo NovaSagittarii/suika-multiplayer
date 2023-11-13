@@ -6,7 +6,7 @@ import Ball, { BallRenderProps } from '../lib/Ball';
 
 export type PIXIBallProps = {
   props: BallRenderProps;
-}
+};
 export default function PIXIBall({ props }: PIXIBallProps) {
   const { x, y, radius } = props;
   const draw = useCallback(
