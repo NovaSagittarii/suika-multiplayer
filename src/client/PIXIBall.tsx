@@ -14,7 +14,7 @@ export default function PIXIBall({ props }: PIXIBallProps) {
       g.clear();
       g.beginFill(0xff0000);
       g.drawCircle(0, 0, radius);
-      g.setTransform(x*50, y*50, 50, 50, theta, 0, 0, 0, 0);
+      g.setTransform(x, y, 1, 1, theta, 0, 0, 0, 0);
       g.rotation = theta;
     },
     [x, y, radius],

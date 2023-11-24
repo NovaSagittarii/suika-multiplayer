@@ -14,7 +14,6 @@ export default function PIXIWall({ props }: PIXIWallProps) {
       g.clear();
       g.beginFill(0x00ff00);
       g.drawRect(x - hx, y - hy, hx * 2, hy * 2);
-      g.scale.set(50);
     },
     [x, y, hx, hy],
   );

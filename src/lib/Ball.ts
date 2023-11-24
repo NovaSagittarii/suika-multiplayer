@@ -1,9 +1,8 @@
-import DynamicEntity from './DynamicEntity';
-
 import * as RAPIER from '@dimforge/rapier2d/rapier';
 const Rapier = await import('@dimforge/rapier2d');
 
-const typeToRadius = [0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7];
+import DynamicEntity from './DynamicEntity';
+import { FRUIT_DIAMETER } from '../constants';
 
 /**
  * Ball physics object
@@ -14,11 +13,11 @@ export default class Ball extends DynamicEntity {
   public readonly radius: number;
 
   constructor(world: RAPIER.World, x: number, y: number, type: number) {
-    const radius = typeToRadius[type];
+    const radius = FRUIT_DIAMETER[type] / 2;
     const rigidBodyDesc = Rapier.RigidBodyDesc.dynamic().setTranslation(x, y);
     const colliderDesc = Rapier.ColliderDesc.ball(radius)
       .setFriction(0.5)
-      .setRestitution(0.0)
+      .setRestitution(0.1)
       .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS)
       .setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.DEFAULT);
     super(world, rigidBodyDesc, colliderDesc);

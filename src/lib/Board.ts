@@ -1,9 +1,10 @@
-import Ball from './Ball';
-
 import * as RAPIER from '@dimforge/rapier2d/rapier';
-import DynamicEntity, { ColliderHandlerMap } from './DynamicEntity';
-import Wall from './Wall';
 const Rapier = await import('@dimforge/rapier2d');
+
+import { BOARD_GRAVITY } from '../constants';
+import DynamicEntity, { ColliderHandlerMap } from './DynamicEntity';
+import Ball from './Ball';
+import Wall from './Wall';
 
 export default class Board {
   private world: RAPIER.World;
@@ -21,7 +22,7 @@ export default class Board {
   private height: number = 0;
 
   constructor() {
-    this.world = new Rapier.World(new Rapier.Vector2(0, -9.81));
+    this.world = new Rapier.World(new Rapier.Vector2(0, -BOARD_GRAVITY));
   }
 
   getWalls() {
@@ -112,8 +113,11 @@ export default class Board {
       throw new Error('cannot merge balls of different types');
     }
     const type = ball1.type;
-    const lowercoords = ball1.translation().y < ball2.translation().y ? ball1.translation() : ball2.translation();
-    const {x, y} = lowercoords;
+    const lowercoords =
+      ball1.translation().y < ball2.translation().y
+        ? ball1.translation()
+        : ball2.translation();
+    const { x, y } = lowercoords;
     ball1.dispose();
     ball2.dispose();
     const newBall = new Ball(this.world, x, y, type + 1);

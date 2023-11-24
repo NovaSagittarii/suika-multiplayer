@@ -30,7 +30,7 @@ export default class Wall extends StaticEntity {
     const colliderDesc = Rapier.ColliderDesc.cuboid(hx, hy)
       .setTranslation(x, y)
       .setFriction(0.0)
-      .setRestitution(0.5);
+      .setRestitution(0.1);
     super(world, colliderDesc);
     this.x = x;
     this.y = y;

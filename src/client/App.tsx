@@ -9,9 +9,10 @@ import Ball, { BallRenderProps } from '../lib/Ball';
 import Wall from '../lib/Wall';
 import PIXIWall from './PIXIWall';
 import PIXIBall from './PIXIBall';
+import { BOARD_HEIGHT, BOARD_WIDTH } from '../constants';
 
 const board = new Board();
-board.initialize(0, 5, 5);
+board.initialize(0, BOARD_WIDTH, BOARD_HEIGHT);
 const ball = board.placeBall(0, 0);
 
 function App() {
@@ -62,7 +63,7 @@ function App() {
           const x = clientX - e.currentTarget.offsetLeft;
           const y = clientY - e.currentTarget.offsetTop;
           // console.log(clientX, e.currentTarget.offsetLeft, x);
-          setMousePosition([x / 50, y / 50]);
+          setMousePosition([x / 10, y / 10]);
         }}
         onMouseDown={() => {
           board.place(mousePosition[0] - board.getWidth());
@@ -75,7 +76,7 @@ function App() {
             balls={balls}
             walls={board.getWalls()}
             nextX={mousePosition[0] - board.getWidth()}
-            nextRadius={0.2}
+            nextRadius={0.5}
           />
         )}
       </Stage>

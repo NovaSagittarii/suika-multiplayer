@@ -30,21 +30,27 @@ export default function PIXIBoard({
   nextRadius,
 }: PIXIBoardProps) {
   return (
-    <Container scale={[1, -1]} x={width * 50} y={height * 50}>
-      {walls.map((wall, index) => (
-        <PIXIWall props={wall} key={index} />
-      ))}
-      {balls.map((ball, index) => (
-        <PIXIBall props={ball} key={index} />
-      ))}
-      <PIXIBall
-        props={{
-          x: constrain(nextX, -width / 2 + nextRadius, width / 2 - nextRadius),
-          y: 0.5,
-          theta: 0,
-          radius: nextRadius,
-        }}
-      />
+    <Container scale={10}>
+      <Container scale={[1, -1]} x={width} y={height}>
+        {walls.map((wall, index) => (
+          <PIXIWall props={wall} key={index} />
+        ))}
+        {balls.map((ball, index) => (
+          <PIXIBall props={ball} key={index} />
+        ))}
+        <PIXIBall
+          props={{
+            x: constrain(
+              nextX,
+              -width / 2 + nextRadius,
+              width / 2 - nextRadius,
+            ),
+            y: 0.5,
+            theta: 0,
+            radius: nextRadius,
+          }}
+        />
+      </Container>
     </Container>
   );
 }
