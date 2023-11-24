@@ -32,6 +32,10 @@ export default function PIXIBoard({
   return (
     <Container scale={10}>
       <Container scale={[1, -1]} x={width} y={height}>
+        <PIXIWall
+          props={{ x: 0, y: -height / 2, hx: width / 2, hy: height / 2 }}
+          color={0x008888}
+        />
         {walls.map((wall, index) => (
           <PIXIWall props={wall} key={index} />
         ))}
