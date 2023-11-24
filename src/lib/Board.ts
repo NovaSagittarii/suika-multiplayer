@@ -118,7 +118,7 @@ export default class Board {
    * @param x where along the x-axis to place the next ball (0 is the center)
    */
   place(x: number) {
-    this.setInputX(x);
+    x = this.setInputX(x);
     this.placeBall(x, this.nextBall);
     ++this.ballsPlaced;
     this.randomizeNextBall();
