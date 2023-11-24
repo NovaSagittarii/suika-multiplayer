@@ -43,57 +43,48 @@ function App() {
     };
   }, []);
 
-  const stepBoard = useCallback(() => {
-    board.step();
-    console.log(ball?.translation());
-  }, [board]);
-
   return (
-    <div className='App'>
-      <div className='card'>
-        <button onClick={stepBoard}>step</button>
+    <div className='App bg-slate-800'>
+      <div className='flex align-middle w-full h-[100vh]'>
+        <Stage
+          className='m-auto w-full h-full object-contain block opacity-50 hover:opacity-100 transition-opacity'
+          onMouseMove={(e) => {
+            const { clientX, clientY } = e;
+            const x = clientX - e.currentTarget.offsetLeft;
+            const y = clientY - e.currentTarget.offsetTop;
+            // console.log(clientX, e.currentTarget.offsetLeft, x);
+            setMousePosition([(x + 80) / 20, y / 20]);
+          }}
+          onMouseDown={() => {
+            board.place(mousePosition[0] - board.getWidth());
+          }}
+        >
+          {board && (
+            <PIXIBoard
+              x={-80}
+              y={0}
+              width={board.getWidth()}
+              height={board.getHeight()}
+              balls={balls}
+              walls={board.getWalls()}
+              nextX={mousePosition[0] - board.getWidth()}
+              nextRadius={FRUIT_RADIUS[board.getNextBall()]}
+            />
+          )}
+          {board && (
+            <PIXIBoard
+              x={320}
+              y={0}
+              width={board.getWidth()}
+              height={board.getHeight()}
+              balls={balls}
+              walls={board.getWalls()}
+              nextX={mousePosition[0] - board.getWidth()}
+              nextRadius={FRUIT_RADIUS[board.getNextBall()]}
+            />
+          )}
+        </Stage>
       </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
-      {/* <PIXIStage /> */}
-      <Stage
-        onMouseMove={(e) => {
-          const { clientX, clientY } = e;
-          const x = clientX - e.currentTarget.offsetLeft;
-          const y = clientY - e.currentTarget.offsetTop;
-          // console.log(clientX, e.currentTarget.offsetLeft, x);
-          setMousePosition([(x + 80) / 20, y / 20]);
-        }}
-        onMouseDown={() => {
-          board.place(mousePosition[0] - board.getWidth());
-        }}
-      >
-        {board && (
-          <PIXIBoard
-            x={-80}
-            y={0}
-            width={board.getWidth()}
-            height={board.getHeight()}
-            balls={balls}
-            walls={board.getWalls()}
-            nextX={mousePosition[0] - board.getWidth()}
-            nextRadius={FRUIT_RADIUS[board.getNextBall()]}
-          />
-        )}
-        {board && (
-          <PIXIBoard
-            x={320}
-            y={0}
-            width={board.getWidth()}
-            height={board.getHeight()}
-            balls={balls}
-            walls={board.getWalls()}
-            nextX={mousePosition[0] - board.getWidth()}
-            nextRadius={FRUIT_RADIUS[board.getNextBall()]}
-          />
-        )}
-      </Stage>
     </div>
   );
 }
