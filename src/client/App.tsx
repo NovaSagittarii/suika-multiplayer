@@ -63,7 +63,7 @@ function App() {
           const x = clientX - e.currentTarget.offsetLeft;
           const y = clientY - e.currentTarget.offsetTop;
           // console.log(clientX, e.currentTarget.offsetLeft, x);
-          setMousePosition([x / 10, y / 10]);
+          setMousePosition([x / 20, y / 20]);
         }}
         onMouseDown={() => {
           board.place(mousePosition[0] - board.getWidth());
@@ -71,6 +71,20 @@ function App() {
       >
         {board && (
           <PIXIBoard
+            x={-80}
+            y={0}
+            width={board.getWidth()}
+            height={board.getHeight()}
+            balls={balls}
+            walls={board.getWalls()}
+            nextX={mousePosition[0] - board.getWidth()}
+            nextRadius={0.5}
+          />
+        )}
+        {board && (
+          <PIXIBoard
+            x={320}
+            y={0}
             width={board.getWidth()}
             height={board.getHeight()}
             balls={balls}

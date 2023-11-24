@@ -10,6 +10,8 @@ import { WallRenderProps } from '../lib/Wall';
 import { constrain } from '../lib/util';
 
 export type PIXIBoardProps = {
+  x: number;
+  y: number;
   width: number;
   height: number;
   balls: BallRenderProps[];
@@ -22,6 +24,8 @@ export type PIXIBoardProps = {
   nextRadius: number;
 };
 export default function PIXIBoard({
+  x,
+  y,
   width,
   height,
   balls,
@@ -30,8 +34,8 @@ export default function PIXIBoard({
   nextRadius,
 }: PIXIBoardProps) {
   return (
-    <Container scale={10}>
-      <Container scale={[1, -1]} x={width} y={height}>
+    <Container scale={20} x={x} y={y}>
+      <Container scale={[1, -1]} x={width} y={4}>
         <PIXIWall
           props={{ x: 0, y: -height / 2, hx: width / 2, hy: height / 2 }}
           color={0x008888}
