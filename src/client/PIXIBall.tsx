@@ -14,11 +14,9 @@ export default function PIXIBall({ props }: PIXIBallProps) {
       g.clear();
       g.beginFill(0xff0000);
       g.drawCircle(0, 0, radius);
-      g.setTransform(x, y, 1, 1, theta, 0, 0, 0, 0);
-      g.rotation = theta;
     },
-    [x, y, radius],
+    [radius],
   );
 
-  return <Graphics draw={draw} />;
+  return <Graphics x={x} y={y} rotation={theta} draw={draw} />;
 }

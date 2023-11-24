@@ -14,10 +14,10 @@ export default function PIXIWall({ props, color = 0x00ff00 }: PIXIWallProps) {
     (g: PIXI.Graphics) => {
       g.clear();
       g.beginFill(color);
-      g.drawRect(x - hx, y - hy, hx * 2, hy * 2);
+      g.drawRect(-hx, -hy, hx * 2, hy * 2);
     },
-    [x, y, hx, hy, color],
+    [hx, hy, color],
   );
 
-  return <Graphics draw={draw} />;
+  return <Graphics x={x} y={y} draw={draw} />;
 }
