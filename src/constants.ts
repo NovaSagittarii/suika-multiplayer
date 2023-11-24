@@ -9,3 +9,9 @@ export const BOARD_GRAVITY = 48;
 export const FRUIT_DIAMETER = [
   1, 1.5, 2.1, 2.4, 3.0, 3.6, 3.8, 5.1, 6.1, 6.9, 8.1, 14,
 ];
+
+/**
+ * fruit radii (in meters), calculated from FRUIT_DIAMETER
+ */
+export const FRUIT_RADIUS = FRUIT_DIAMETER.map((x) => x / 2);
+export const FRUIT_TYPES = FRUIT_DIAMETER.length;

@@ -1,10 +1,11 @@
 import * as RAPIER from '@dimforge/rapier2d/rapier';
 const Rapier = await import('@dimforge/rapier2d');
 
-import { BOARD_GRAVITY } from '../constants';
+import { BOARD_GRAVITY, FRUIT_RADIUS, FRUIT_TYPES } from '../constants';
 import DynamicEntity, { ColliderHandlerMap } from './DynamicEntity';
 import Ball from './Ball';
 import Wall from './Wall';
+import { constrain, hash } from './util';
 
 export default class Board {
   private world: RAPIER.World;
@@ -13,7 +14,26 @@ export default class Board {
 
   private score: number = 0;
   private ballsPlaced: number = 0;
-  private seed: number = -1;
+
+  /**
+   * the largest ball; used in randomizer
+   */
+  private largestBall: number = 0;
+
+  /**
+   * where the next ball will be placed (constrained by this.nextBall)
+   */
+  private inputX: number = 0;
+
+  /**
+   * next ball determined by the randomizer
+   */
+  private nextBall: number = 0;
+
+  /**
+   * randomizer state
+   */
+  private seed: number = -1 | 0;
 
   private ticks: number = 0;
   private events: number = 0;
@@ -23,6 +43,14 @@ export default class Board {
 
   constructor() {
     this.world = new Rapier.World(new Rapier.Vector2(0, -BOARD_GRAVITY));
+    console.log(
+      this.score,
+      this.inputX,
+      this.nextBall,
+      this.seed,
+      this.ticks,
+      this.events,
+    );
   }
 
   getWalls() {
@@ -45,6 +73,10 @@ export default class Board {
     return this.height;
   }
 
+  public getNextBall() {
+    return this.nextBall;
+  }
+
   /**
    * initialize the board with a set configuration
    * @param seed seed to initialize board with
@@ -61,12 +93,35 @@ export default class Board {
   }
 
   /**
+   * calls the hash function to randomize the next ball
+   */
+  randomizeNextBall() {
+    const largestAllowed = Math.max(0, this.largestBall - 2);
+    this.nextBall = Math.abs(this.seed) % (largestAllowed + 1);
+    this.seed = hash(this.seed);
+  }
+
+  /**
+   * sets the placing location of the next ball, constrains value
+   * @param x where along the x-axis to place the next ball (0 is the center)
+   */
+  setInputX(x: number) {
+    return (this.inputX = constrain(
+      x,
+      -this.width / 2 + FRUIT_RADIUS[this.nextBall],
+      this.width / 2 - FRUIT_RADIUS[this.nextBall],
+    ));
+  }
+
+  /**
    * places the next ball; which ball is determined by the randomizer state
    * @param x where along the x-axis to place the next ball (0 is the center)
    */
   place(x: number) {
-    this.placeBall(x, 0);
+    this.setInputX(x);
+    this.placeBall(x, this.nextBall);
     ++this.ballsPlaced;
+    this.randomizeNextBall();
   }
 
   /**
@@ -74,8 +129,9 @@ export default class Board {
    * @param x where along the x-axis to place the next ball (0 is the center)
    * @param ball_type what ball type to use
    */
-  placeBall(x: number, ball_type: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) {
-    const ball = new Ball(this.world, x, 0.5, ball_type);
+  placeBall(x: number, ball_type: number) {
+    if (ball_type < 0 || ball_type >= FRUIT_TYPES) throw 'invalid ball_type';
+    const ball = new Ball(this.world, x, FRUIT_RADIUS[ball_type], ball_type);
     ball.attachCollider(this.balls);
     return ball;
   }
@@ -120,7 +176,11 @@ export default class Board {
     const { x, y } = lowercoords;
     ball1.dispose();
     ball2.dispose();
-    const newBall = new Ball(this.world, x, y, type + 1);
-    newBall.attachCollider(this.balls);
+    if (type < FRUIT_TYPES - 1) {
+      // apparently two watermelons disappear
+      const newBall = new Ball(this.world, x, y, type + 1);
+      newBall.attachCollider(this.balls);
+      this.largestBall = Math.max(this.largestBall, type + 1);
+    }
   }
 }

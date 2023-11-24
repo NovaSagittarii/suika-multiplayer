@@ -53,7 +53,7 @@ export default function PIXIBoard({
               -width / 2 + nextRadius,
               width / 2 - nextRadius,
             ),
-            y: 0.5,
+            y: nextRadius,
             theta: 0,
             radius: nextRadius,
           }}
