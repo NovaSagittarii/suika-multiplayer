@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io-client';
 import Board from '../lib/Board';
 import { xdti } from '../lib/util';
-import { suika } from '../lib/proto';
+import { suika } from '@/proto';
 
 /**
  * client-side board that handles update requests from user to

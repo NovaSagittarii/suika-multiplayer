@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [react(), wasm(), topLevelAwait()],
   server: {
     hmr: {
-      port: +process.env.APP_PORT || 3010,
+      port: process.env.APP_PORT ? +process.env.APP_PORT : 3010,
       // clientPort: 443,
       // path: "/vite-hmr"
     },
@@ -18,9 +18,13 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: '@build',
-        replacement: resolve(__dirname, './build/'),
+        find: '@/build',
+        replacement: resolve(__dirname, 'build'),
       },
+      {
+        find: '@/proto',
+        replacement: resolve(__dirname, 'build/bundle_proto'),
+      }
     ],
   },
 });

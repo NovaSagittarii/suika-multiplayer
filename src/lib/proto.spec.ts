@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { suika } from './proto';
+import { suika } from '@/proto';
 
 test('protobuf example', () => {
   const o = suika.Test.create();

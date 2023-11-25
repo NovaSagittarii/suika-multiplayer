@@ -6,7 +6,7 @@ import Board from '../lib/Board';
 import PIXIBoard from './PIXIBoard';
 import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_RADIUS } from '../constants';
 import { ClientBoard } from './io';
-import { suika } from '../lib/proto';
+import { suika } from '@/proto';
 
 const board = new ClientBoard();
 const otherBoard = new Board();

@@ -8,9 +8,6 @@ dependencies:
   '@dimforge/rapier2d':
     specifier: ^0.11.2
     version: 0.11.2
-  '@types/long':
-    specifier: ^5.0.0
-    version: 5.0.0
   '@types/node':
     specifier: ^20.9.0
     version: 20.9.0
@@ -1802,16 +1799,6 @@ packages:
         integrity: sha512-yg6E+u0/+Zjva+buc3EIb+29XEg4wltq7cSmd4Uc2EE/1nUVmxyzpX6gUXD0V8jIrG0r7YeOGVIbYRkxeooCtw==,
       }
     dev: true
-
-  /@types/long@5.0.0:
-    resolution:
-      {
-        integrity: sha512-eQs9RsucA/LNjnMoJvWG/nXa7Pot/RbBzilF/QRIU/xRl+0ApxrSUFsV5lmf01SvSlqMzJ7Zwxe440wmz2SJGA==,
-      }
-    deprecated: This is a stub types definition. long provides its own type definitions, so you do not need this installed.
-    dependencies:
-      long: 5.2.3
-    dev: false
 
   /@types/markdown-it@12.2.3:
     resolution:
@@ -4449,6 +4436,7 @@ packages:
       {
         integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==,
       }
+    dev: true
 
   /loose-envify@1.4.0:
     resolution:

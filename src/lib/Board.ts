@@ -7,7 +7,7 @@ import Ball, { BallRenderProps } from './Ball';
 import Wall from './Wall';
 import { constrain, hash, xitd } from './util';
 import { BufferedEvents } from './BufferedEvents';
-import { suika } from './proto';
+import { suika } from '@/proto';
 
 export default class Board extends BufferedEvents {
   private world: RAPIER.World;

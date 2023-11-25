@@ -1,6 +1,6 @@
 import { Server as HttpServer } from 'http';
 import { Server as SioServer } from 'socket.io';
-import { suika } from './build/bundle_proto';
+import { suika } from '@/proto';
 
 export function createIOServer(server: HttpServer) {
   const io = new SioServer(server);

@@ -1,6 +1,6 @@
 // Imports
 import { error } from 'console';
-import { suika } from './proto';
+import { suika } from '@/proto';
 
 export type GameEvent = suika.event.game.GameEvent;
 
