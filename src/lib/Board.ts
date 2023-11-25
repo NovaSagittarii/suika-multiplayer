@@ -3,7 +3,7 @@ const Rapier = await import('@dimforge/rapier2d');
 
 import { BOARD_GRAVITY, FRUIT_RADIUS, FRUIT_TYPES } from '../constants';
 import DynamicEntity, { ColliderHandlerMap } from './DynamicEntity';
-import Ball from './Ball';
+import Ball, { BallRenderProps } from './Ball';
 import Wall from './Wall';
 import { constrain, hash, xitd } from './util';
 import { BufferedEvents } from './BufferedEvents';
@@ -41,18 +41,11 @@ export default class Board extends BufferedEvents {
 
   private width: number = 0;
   private height: number = 0;
+  private id: number = -1;
 
   constructor() {
     super();
     this.world = new Rapier.World(new Rapier.Vector2(0, -BOARD_GRAVITY));
-    console.log(
-      this.score,
-      this.inputX,
-      this.nextBall,
-      this.seed,
-      this.ticks,
-      this.events,
-    );
   }
 
   getWalls() {
@@ -60,26 +53,39 @@ export default class Board extends BufferedEvents {
   }
 
   getBalls() {
-    const balls = [];
+    const balls: BallRenderProps[] = [];
     for (const ball of this.balls.values()) {
       balls.push((ball as Ball).renderProps());
     }
     return balls;
   }
 
-  getWidth() {
+  public getWidth() {
     return this.width;
   }
 
-  getHeight() {
+  public getHeight() {
     return this.height;
   }
 
   public getNextBall() {
     return this.nextBall;
   }
+
   public getInputX() {
     return this.inputX;
+  }
+
+  public getTicks() {
+    return this.ticks;
+  }
+
+  public getId() {
+    return this.id;
+  }
+
+  public isInitialized() {
+    return this.id !== -1;
   }
 
   /**
@@ -91,14 +97,13 @@ export default class Board extends BufferedEvents {
       const event = q.front();
       q.pop();
       switch (event?.event) {
-        case "place":
+        case 'place':
           this.place(xitd(event.place!.x!, this.width));
           break;
-        case "placing":
+        case 'placing':
           this.setInputX(xitd(event.placing!.x!, this.width));
           break;
-        case "receive":
-
+        case 'receive':
           break;
       }
     }
@@ -109,14 +114,16 @@ export default class Board extends BufferedEvents {
    * @param seed seed to initialize board with
    * @param width width of the board in meters
    * @param height height of the board in meters
+   * @param id board id (used in event.target to reference itself)
    */
-  initialize(seed: number, width: number, height: number) {
+  initialize(seed: number, width: number, height: number, id: number) {
     this.seed = seed | 0;
     this.walls.push(new Wall(this.world, -width / 2 - 1, 0, 1, height * 2));
     this.walls.push(new Wall(this.world, width / 2 + 1, 0, 1, height * 2));
     this.walls.push(new Wall(this.world, 0, -height - 1, width, 1));
     this.width = width;
     this.height = height;
+    this.id = id;
   }
 
   /**
@@ -219,10 +226,12 @@ export default class Board extends BufferedEvents {
   tick() {
     const event = this.eventBuffer.front();
     if (event) {
-      if (event.ticks > this.ticks) { // can advance simulation
+      if (event.ticks > this.ticks) {
+        // can advance simulation
         this.step();
         return true;
-      } else if (event.ticks == this.ticks) { // event to process
+      } else if (event.ticks == this.ticks) {
+        // event to process
         this.drainEvents();
       }
     }
@@ -235,8 +244,10 @@ export default class Board extends BufferedEvents {
    */
   createEvent(offset: number = 1) {
     if (offset <= 0) throw 'Board::createEvent - offset must be positive';
+    if (this.id < 0) throw 'Board::createEvent - board is not initialized';
     const event = suika.event.game.GameEvent.create();
     event.ticks = this.ticks + offset;
+    event.target = this.id;
     return event;
   }
 }

@@ -1,7 +1,7 @@
-import { Socket } from "socket.io-client";
-import Board from "../lib/Board";
-import { xdti } from "../lib/util";
-import { suika } from "../lib/proto";
+import { Socket } from 'socket.io-client';
+import Board from '../lib/Board';
+import { xdti } from '../lib/util';
+import { suika } from '../lib/proto';
 
 /**
  * client-side board that handles update requests from user to
@@ -15,7 +15,7 @@ export class ClientBoard extends Board {
 
   /**
    * sets the socket that will also have requested events piped into it
-   * @param socket 
+   * @param socket
    */
   public setSocket(socket: Socket | null) {
     this.socket = socket;

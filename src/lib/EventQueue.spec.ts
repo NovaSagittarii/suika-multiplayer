@@ -57,7 +57,7 @@ test('eventqueue out of order events', () => {
   expect(eq.canPop()).toBe(false);
 
   eq.push(b);
-  
+
   expect(eq.empty()).toBe(false);
   expect(eq.canPop()).toBe(false);
 
@@ -77,4 +77,4 @@ test('eventqueue out of order events', () => {
 
   expect(eq.empty()).toBe(true);
   expect(eq.canPop()).toBe(false);
-})
+});

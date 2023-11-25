@@ -27,13 +27,13 @@ export function hash(a: number) {
 }
 
 /**
-   * maps the fraction x/y into 32-bit representation
-   * @param x
-   * @param y
-   * @returns 32-bit int representation of x/range
-   */
+ * maps the fraction x/y into 32-bit representation
+ * @param x
+ * @param y
+ * @returns 32-bit int representation of x/range
+ */
 export function xdti(x: number, y: number) {
-  return x/y*0x0fffffff|0;
+  return ((x / y) * 0x0fffffff) | 0;
 }
 
 /**
@@ -43,5 +43,5 @@ export function xdti(x: number, y: number) {
  * @returns x
  */
 export function xitd(xy: number, y: number) {
-  return xy*y/0x0fffffff;
+  return (xy * y) / 0x0fffffff;
 }

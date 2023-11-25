@@ -1,8 +1,9 @@
+import React from 'react';
 import * as PIXI from 'pixi.js';
-import { Container, Graphics } from '@pixi/react';
-import { useCallback, useEffect, useState } from 'react';
+import { Graphics } from '@pixi/react';
+import { useCallback } from 'react';
 
-import Ball, { BallRenderProps } from '../lib/Ball';
+import { BallRenderProps } from '../lib/Ball';
 
 export type PIXIBallProps = {
   props: BallRenderProps;

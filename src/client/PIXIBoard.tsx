@@ -1,9 +1,7 @@
-import { Container, Graphics } from '@pixi/react';
-import { useCallback, useEffect, useState } from 'react';
-import * as PIXI from 'pixi.js';
+import React from 'react';
+import { Container } from '@pixi/react';
 
-import Board from '../lib/Board';
-import Ball, { BallRenderProps } from '../lib/Ball';
+import { BallRenderProps } from '../lib/Ball';
 import PIXIWall from './PIXIWall';
 import PIXIBall from './PIXIBall';
 import { WallRenderProps } from '../lib/Wall';
@@ -12,6 +10,12 @@ import { constrain } from '../lib/util';
 export type PIXIBoardProps = {
   x: number;
   y: number;
+
+  /**
+   * current tick; used to convince react to redraw stuff
+   */
+  ticks: number;
+
   width: number;
   height: number;
   balls: BallRenderProps[];

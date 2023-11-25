@@ -1,11 +1,11 @@
 import { Server as HttpServer } from 'http';
 import { Server as SioServer } from 'socket.io';
+import { suika } from './build/bundle_proto';
 
 export function createIOServer(server: HttpServer) {
   const io = new SioServer(server);
 
   const ns2 = io.of('/ns2');
-
   ns2.on('connection', (socket) => {
     socket.emit('message', `Welcome to ns2 ${socket.id}`);
   });
@@ -17,6 +17,14 @@ export function createIOServer(server: HttpServer) {
       console.log('server got a message ', msg);
 
       socket.emit('message', 'yoyo');
+    });
+
+    // TODO: *remove* the spaghetti code the 1v1 gamering
+    socket.on('board', (data) => {
+      const issues = suika.event.game.GameEvent.verify(data);
+      if (issues === null) {
+        socket.broadcast.emit('board', data);
+      }
     });
 
     socket.on('disconnect', () => {
