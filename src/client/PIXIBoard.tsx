@@ -7,6 +7,7 @@ import PIXIBall from './PIXIBall';
 import { WallRenderProps } from '../lib/Wall';
 import { constrain } from '../lib/util';
 import { TextStyle } from 'pixi.js';
+import { FRUIT_RADIUS } from '../constants';
 
 export type PIXIBoardProps = {
   x: number;
@@ -26,7 +27,7 @@ export type PIXIBoardProps = {
    * controller state -- where the next ball will be placed
    */
   nextX: number;
-  nextRadius: number;
+  nextBall: number;
   debugText?: string;
 };
 export default function PIXIBoard({
@@ -37,9 +38,10 @@ export default function PIXIBoard({
   balls,
   walls,
   nextX,
-  nextRadius,
+  nextBall,
   debugText = '',
 }: PIXIBoardProps) {
+  const nextRadius = FRUIT_RADIUS[nextBall];
   return (
     <Container scale={20} x={x} y={y}>
       <Container scale={[1, -1]} x={width} y={4}>
@@ -62,7 +64,7 @@ export default function PIXIBoard({
             ),
             y: nextRadius,
             theta: 0,
-            radius: nextRadius,
+            type: nextBall,
           }}
         />
         <Text

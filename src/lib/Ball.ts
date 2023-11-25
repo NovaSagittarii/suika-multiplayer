@@ -33,7 +33,7 @@ export default class Ball extends DynamicEntity {
       x,
       y,
       theta: this.rigidBody.rotation(),
-      radius: this.radius,
+      type: this.type,
     };
   }
 }
@@ -45,5 +45,5 @@ export type BallRenderProps = {
   x: number;
   y: number;
   theta: number;
-  radius: number;
+  type: number;
 };

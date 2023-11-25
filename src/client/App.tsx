@@ -18,7 +18,8 @@ function App() {
 
   const animate = (time: number) => {
     requestRef.current = requestAnimationFrame(animate);
-    if (board.isInitialized() && otherBoard.isInitialized()) {
+    // if (board.isInitialized() && otherBoard.isInitialized()) {
+    if (board.isInitialized()) {
       setTicks(board.getTicks());
       board.requestPlacing(mousePosition[0]);
 
@@ -98,7 +99,7 @@ function App() {
               balls={board.getBalls()}
               walls={board.getWalls()}
               nextX={mousePosition[0]}
-              nextRadius={FRUIT_RADIUS[board.getNextBall()]}
+              nextBall={board.getNextBall()}
               debugText={board.getTicks() + ''}
             />
           )}
@@ -112,7 +113,7 @@ function App() {
               balls={otherBoard.getBalls()}
               walls={otherBoard.getWalls()}
               nextX={otherBoard.getInputX()}
-              nextRadius={FRUIT_RADIUS[otherBoard.getNextBall()]}
+              nextBall={otherBoard.getNextBall()}
               debugText={otherBoard.getTicks() + ''}
             />
           )}
