@@ -2,6 +2,8 @@
 import { error } from 'console';
 import { suika } from './proto';
 
+export type GameEvent = suika.event.game.GameEvent;
+
 // Something
 export default class EventQueue {
   // State
