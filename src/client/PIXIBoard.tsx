@@ -1,11 +1,12 @@
 import React from 'react';
-import { Container } from '@pixi/react';
+import { Container, Text } from '@pixi/react';
 
 import { BallRenderProps } from '../lib/Ball';
 import PIXIWall from './PIXIWall';
 import PIXIBall from './PIXIBall';
 import { WallRenderProps } from '../lib/Wall';
 import { constrain } from '../lib/util';
+import { TextStyle } from 'pixi.js';
 
 export type PIXIBoardProps = {
   x: number;
@@ -26,6 +27,7 @@ export type PIXIBoardProps = {
    */
   nextX: number;
   nextRadius: number;
+  debugText?: string;
 };
 export default function PIXIBoard({
   x,
@@ -36,6 +38,7 @@ export default function PIXIBoard({
   walls,
   nextX,
   nextRadius,
+  debugText = '',
 }: PIXIBoardProps) {
   return (
     <Container scale={20} x={x} y={y}>
@@ -61,6 +64,16 @@ export default function PIXIBoard({
             theta: 0,
             radius: nextRadius,
           }}
+        />
+        <Text
+          scale={[1 / 20, -1 / 20]}
+          text={debugText}
+          style={
+            {
+              fill: 'red',
+            } as TextStyle
+          }
+          anchor={{ x: 0.5, y: 0.5 }}
         />
       </Container>
     </Container>

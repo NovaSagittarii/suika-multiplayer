@@ -45,6 +45,7 @@ function App() {
       board.setSocket(socket);
       // TODO: use the id from the server from the game room (fix spaghetti)
       board.initialize(0, BOARD_WIDTH, BOARD_HEIGHT, socket.id.charCodeAt(0));
+      setTicks(ticks - 1);
     });
 
     socket.emit('message', 'hello');
@@ -54,12 +55,13 @@ function App() {
       if (suika.event.game.GameEvent.verify(data) === null) {
         const event = suika.event.game.GameEvent.decode(new Uint8Array(data));
         if (!otherBoard.isInitialized()) {
-          console.log("initialized otherboard with id", event.target);
+          console.log('initialized otherboard with id', event.target);
           otherBoard.initialize(0, BOARD_WIDTH, BOARD_HEIGHT, event.target);
-          setTicks(ticks-1);
+          setTicks(ticks - 1);
         }
         if (event.target == otherBoard.getId()) {
           otherBoard.acceptEvent(event);
+          setTicks(otherBoard.getTicks());
         }
       }
     });
@@ -97,6 +99,7 @@ function App() {
               walls={board.getWalls()}
               nextX={mousePosition[0]}
               nextRadius={FRUIT_RADIUS[board.getNextBall()]}
+              debugText={board.getTicks() + ''}
             />
           )}
           {otherBoard.isInitialized() && (
@@ -109,7 +112,8 @@ function App() {
               balls={otherBoard.getBalls()}
               walls={otherBoard.getWalls()}
               nextX={otherBoard.getInputX()}
-              nextRadius={FRUIT_RADIUS[board.getNextBall()]}
+              nextRadius={FRUIT_RADIUS[otherBoard.getNextBall()]}
+              debugText={otherBoard.getTicks() + ''}
             />
           )}
         </Stage>

@@ -17,7 +17,7 @@ export abstract class BufferedEvents {
 
   /**
    * pushes an event into the event buffer (when receiving); does not set id
-   * @param event 
+   * @param event
    */
   public acceptEvent(event: GameEvent) {
     this.eventBuffer.push(event);
