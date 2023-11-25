@@ -1,7 +1,7 @@
-const express = require('express');
-const http = require('http');
+import express from 'express';
+import http from 'http';
 
-const { createServer: createViteServer } = require('vite');
+import { createServer as createViteServer } from 'vite';
 import { createIOServer } from './io';
 
 const port = process.env.APP_PORT || 3010;
