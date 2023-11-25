@@ -5,9 +5,11 @@ import { BOARD_GRAVITY, FRUIT_RADIUS, FRUIT_TYPES } from '../constants';
 import DynamicEntity, { ColliderHandlerMap } from './DynamicEntity';
 import Ball from './Ball';
 import Wall from './Wall';
-import { constrain, hash } from './util';
+import { constrain, hash, xitd } from './util';
+import { BufferedEvents } from './BufferedEvents';
+import { suika } from './proto';
 
-export default class Board {
+export default class Board extends BufferedEvents {
   private world: RAPIER.World;
   private balls: ColliderHandlerMap = new Map();
   private walls: Wall[] = [];
@@ -36,12 +38,12 @@ export default class Board {
   private seed: number = -1 | 0;
 
   private ticks: number = 0;
-  private events: number = 0;
 
   private width: number = 0;
   private height: number = 0;
 
   constructor() {
+    super();
     this.world = new Rapier.World(new Rapier.Vector2(0, -BOARD_GRAVITY));
     console.log(
       this.score,
@@ -75,6 +77,31 @@ export default class Board {
 
   public getNextBall() {
     return this.nextBall;
+  }
+  public getInputX() {
+    return this.inputX;
+  }
+
+  /**
+   * Drains events up until the current tick.
+   */
+  drainEvents(): void {
+    const q = this.eventBuffer;
+    while (q.canPop() && q.front()!.ticks <= this.ticks) {
+      const event = q.front();
+      q.pop();
+      switch (event?.event) {
+        case "place":
+          this.place(xitd(event.place!.x!, this.width));
+          break;
+        case "placing":
+          this.setInputX(xitd(event.placing!.x!, this.width));
+          break;
+        case "receive":
+
+          break;
+      }
+    }
   }
 
   /**
@@ -157,6 +184,7 @@ export default class Board {
       let handle2 = event.collider2(); // Handle of the second collider involved in the event.
       /* Handle the contact force event. */
     });
+    ++this.ticks;
   }
 
   /**
@@ -182,5 +210,33 @@ export default class Board {
       newBall.attachCollider(this.balls);
       this.largestBall = Math.max(this.largestBall, type + 1);
     }
+  }
+
+  /**
+   * steps the board by one tick up to the latest known state
+   * @returns whether ticks was updated or not
+   */
+  tick() {
+    const event = this.eventBuffer.front();
+    if (event) {
+      if (event.ticks > this.ticks) { // can advance simulation
+        this.step();
+        return true;
+      } else if (event.ticks == this.ticks) { // event to process
+        this.drainEvents();
+      }
+    }
+    return false;
+  }
+
+  /**
+   * creates an event that happens in (offset) ticks
+   * @param offset positive number
+   */
+  createEvent(offset: number = 1) {
+    if (offset <= 0) throw 'Board::createEvent - offset must be positive';
+    const event = suika.event.game.GameEvent.create();
+    event.ticks = this.ticks + offset;
+    return event;
   }
 }

@@ -10,8 +10,9 @@ import Wall from '../lib/Wall';
 import PIXIWall from './PIXIWall';
 import PIXIBall from './PIXIBall';
 import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_RADIUS } from '../constants';
+import { ClientBoard } from './io';
 
-const board = new Board();
+const board = new ClientBoard();
 board.initialize(0, BOARD_WIDTH, BOARD_HEIGHT);
 const ball = board.placeBall(0, 0);
 
@@ -21,24 +22,31 @@ function App() {
   const [mousePosition, setMousePosition] = useState([0, 0]);
 
   const animate = (time: number) => {
-    // The 'state' will always be the initial value here
     requestRef.current = requestAnimationFrame(animate);
     setBalls(board.getBalls());
-    board.step();
+    board.requestPlacing(mousePosition[0]);
+    
+    // manual ticking
+    let wasTicked = board.tick();
+    if (!wasTicked) {
+      board.step(); // step the physics engine for yourself if events were processed instead
+    }
   };
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(requestRef.current);
-  }, []); // Make sure the effect runs only once
+  }, [mousePosition]); // Make sure the effect runs only once
 
   useEffect(() => {
     const socket = io({ transports: ['websocket'] });
+    board.setSocket(socket);
 
     socket.emit('message', 'hello');
     socket.on('message', (data) => console.info('[sockets]', data));
 
     return () => {
+      board.setSocket(null);
       socket.disconnect();
     };
   }, []);
@@ -53,10 +61,10 @@ function App() {
             const x = clientX - e.currentTarget.offsetLeft;
             const y = clientY - e.currentTarget.offsetTop;
             // console.log(clientX, e.currentTarget.offsetLeft, x);
-            setMousePosition([(x + 80) / 20, y / 20]);
+            setMousePosition([(x + 80) / 20 - board.getWidth(), y / 20]);
           }}
           onMouseDown={() => {
-            board.place(mousePosition[0] - board.getWidth());
+            board.requestPlace(mousePosition[0]);
           }}
         >
           {board && (
@@ -67,7 +75,7 @@ function App() {
               height={board.getHeight()}
               balls={balls}
               walls={board.getWalls()}
-              nextX={mousePosition[0] - board.getWidth()}
+              nextX={mousePosition[0]}
               nextRadius={FRUIT_RADIUS[board.getNextBall()]}
             />
           )}
@@ -79,7 +87,7 @@ function App() {
               height={board.getHeight()}
               balls={balls}
               walls={board.getWalls()}
-              nextX={mousePosition[0] - board.getWidth()}
+              nextX={board.getInputX()}
               nextRadius={FRUIT_RADIUS[board.getNextBall()]}
             />
           )}
