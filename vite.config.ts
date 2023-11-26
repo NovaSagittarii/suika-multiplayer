@@ -24,7 +24,7 @@ export default defineConfig({
       {
         find: '@/proto',
         replacement: resolve(__dirname, 'build/bundle_proto'),
-      }
+      },
     ],
   },
 });

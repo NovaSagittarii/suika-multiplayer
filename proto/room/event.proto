@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package room;
+
+import "google/protobuf/timestamp.proto";
+import "events.proto";
+
+/**
+ * wrapper class for room events
+ */
+message Event {
+  /// when
+  google.protobuf.Timestamp time = 1;
+
+  /// room, if applicable
+  int32 target = 2;
+
+  /// type of event the wrapper contains
+  oneof event_type {
+    room.event.List list = 5;
+    room.event.Join join = 6;
+    room.event.Leave leave = 7;
+    room.event.UpdateMember update_member = 8;
+    room.event.UpdateConfig update_config = 9;
+    room.event.Start start = 10;
+  }
+}

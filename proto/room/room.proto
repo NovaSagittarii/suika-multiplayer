@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package room;
+
+import "member.proto";
+import "config.proto";
+
+/**
+ * a game room
+ *
+ * see room.RoomListing for a simplified object
+ */
+message Room {
+  /// room id
+  int32 id = 1;
+
+  /// host id
+  int32 host = 2;
+  
+  /// clients that are in the lobby
+  repeated room.Member members = 3;
+
+  /// room settings
+  room.Config config = 4;
+}
+
+/**
+ * a game room for the room listing; a simplified room
+ */
+message RoomListing {
+  /// room id
+  int32 id = 1;
+
+  /// how many people are in it
+  int32 size = 2;
+
+  /// how many people can be in it (current unused)
+  int32 capacity = 3;
+
+  /// room name
+  string name = 4;
+}

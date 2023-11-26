@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+/**
+ * Room-specific events
+ */
+package room.event;
+
+import "room.proto";
+import "member.proto";
+
+/**
+ * Container for room listing request and response
+ */
+message List {
+  /**
+   * Server will send room information in here.
+   *
+   * Client will send an empty room.event.List to trigger request.
+   */
+  repeated room.RoomListing rooms = 1;
+}
+
+/**
+ * occurs when host wants to adjust room settings
+ */
+message UpdateConfig {
+  /// New configuration to be applied
+  room.Config new_config = 1;
+}
+
+/**
+ * Event when a client joins a room
+ */
+message Join {
+  /// the member joining the room
+  room.Member member = 1;
+}
+
+/**
+ * Event when a client leaves a room
+ */
+message Leave {
+  /// the id of the member who left the room
+  int32 member_id = 1;
+}
+
+/**
+ * occurs when a member wants to change their state.
+ * only applies to active (playing or not) for now
+ */
+message UpdateMember {
+  /// Player to be updated (make sure id is specified)
+  room.Member new_member = 1;
+}
+
+/**
+ * event to start the game
+ *
+ * when it starts is on the timestamp of the event wrapper
+ */
+message Start {
+  /// (used by server) players that will be playing
+  repeated room.Member players = 1;
+}

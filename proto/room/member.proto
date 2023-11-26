@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package room;
+
+/**
+ * room member details
+ */
+message Member {
+  /// member id used for board reference when playing
+  int32 id = 1;
+
+  /// member username
+  string name = 2;
+
+  /// whether the member is playing or not
+  bool active = 3;
+}

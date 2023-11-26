@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package room;
+
+import "member.proto";
+
+/**
+ * room configuration details
+ */
+message Config {
+  /// room name
+  string name = 1;
+
+  /// TODO: add more settings (player limit?)
+}
