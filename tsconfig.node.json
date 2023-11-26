@@ -3,6 +3,7 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "noEmit": false,
     "allowSyntheticDefaultImports": true
   },
   "extends": ["./tsconfig.json"],

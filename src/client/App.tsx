@@ -4,7 +4,7 @@ import { Stage } from '@pixi/react';
 
 import Board from '../lib/Board';
 import PIXIBoard from './PIXIBoard';
-import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_RADIUS } from '../constants';
+import { BOARD_HEIGHT, BOARD_WIDTH } from '../constants';
 import { ClientBoard } from './io';
 import { suika } from '@/proto';
 
@@ -16,6 +16,8 @@ function App() {
   const [ticks, setTicks] = useState<number>(0);
   const [mousePosition, setMousePosition] = useState([0, 0]);
 
+  // TODO: use time argument of animate callback for how many ticks?
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const animate = (time: number) => {
     requestRef.current = requestAnimationFrame(animate);
     // if (board.isInitialized() && otherBoard.isInitialized()) {
@@ -24,7 +26,7 @@ function App() {
       board.requestPlacing(mousePosition[0]);
 
       // manual ticking
-      let wasTicked = board.tick();
+      const wasTicked = board.tick();
       if (!wasTicked) {
         board.step(); // step the physics engine for yourself if events were processed instead
       }

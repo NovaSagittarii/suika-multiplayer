@@ -1,5 +1,4 @@
 // Imports
-import { error } from 'console';
 import { suika } from '@/proto';
 
 export type GameEvent = suika.Event;

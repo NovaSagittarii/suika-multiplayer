@@ -1,7 +1,6 @@
 import DisposableEntity from './DisposableEntity';
 
 import * as RAPIER from '@dimforge/rapier2d/rapier';
-const Rapier = await import('@dimforge/rapier2d');
 
 // export { type ColliderHandlerMap } from './DynamicEntity';
 

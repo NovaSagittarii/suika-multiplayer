@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
-import { Container, Graphics } from '@pixi/react';
-import { useCallback, useEffect, useState } from 'react';
+import { Graphics } from '@pixi/react';
+import React, { useCallback } from 'react';
 
-import Wall, { WallRenderProps } from '../lib/Wall';
+import { WallRenderProps } from '../lib/Wall';
 
 export type PIXIWallProps = {
   props: WallRenderProps;

@@ -4,7 +4,7 @@ import Board from './Board';
 test('testing gravity', () => {
   // return; // vitest does not seem to like wasm modules
   const board = new Board();
-  board.initialize(0, 10, 10);
+  board.initialize(0, 10, 10, -1);
   const ball = board.placeBall(0, 0);
 
   let prev = ball.translation().y;

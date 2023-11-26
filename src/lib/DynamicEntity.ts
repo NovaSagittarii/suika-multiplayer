@@ -1,7 +1,6 @@
 import DisposableEntity from './DisposableEntity';
 
 import * as RAPIER from '@dimforge/rapier2d/rapier';
-const Rapier = await import('@dimforge/rapier2d');
 
 /**
  * Maps collider handlers (number) to the entity they're a part of

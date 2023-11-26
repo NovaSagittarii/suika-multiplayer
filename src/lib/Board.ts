@@ -2,7 +2,7 @@ import * as RAPIER from '@dimforge/rapier2d/rapier';
 const Rapier = await import('@dimforge/rapier2d');
 
 import { BOARD_GRAVITY, FRUIT_RADIUS, FRUIT_TYPES } from '../constants';
-import DynamicEntity, { ColliderHandlerMap } from './DynamicEntity';
+import { ColliderHandlerMap } from './DynamicEntity';
 import Ball, { BallRenderProps } from './Ball';
 import Wall from './Wall';
 import { constrain, hash, xitd } from './util';
@@ -187,8 +187,11 @@ export default class Board extends BufferedEvents {
       }
     });
     eventQueue.drainContactForceEvents((event) => {
-      let handle1 = event.collider1(); // Handle of the first collider involved in the event.
-      let handle2 = event.collider2(); // Handle of the second collider involved in the event.
+      // TODO: contact force events needed?
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const handle1 = event.collider1(); // Handle of the first collider involved in the event.
+      const handle2 = event.collider2(); // Handle of the second collider involved in the event.
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       /* Handle the contact force event. */
     });
     ++this.ticks;
