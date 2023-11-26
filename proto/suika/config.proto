@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package suika;
+
+/**
+ * game configuration details
+ */
+message Config {
+  /// initial randomizer state
+  int32 seed = 1;
+
+  /// width of board
+  int32 width = 2;
+
+  /// heigth of board
+  int32 height = 3;
+}

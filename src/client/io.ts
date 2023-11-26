@@ -23,21 +23,21 @@ export class ClientBoard extends Board {
 
   public requestPlacing(x: number) {
     const e = this.createEvent();
-    e.event = 'placing';
+    e.eventType = 'placing';
     e.placing = {
       x: xdti(x, this.getWidth()),
     };
     this.pushEvent(e);
-    this.socket?.emit('board', suika.event.game.GameEvent.encode(e).finish());
+    this.socket?.emit('board', suika.Event.encode(e).finish());
   }
 
   public requestPlace(x: number) {
     const e = this.createEvent();
-    e.event = 'place';
+    e.eventType = 'place';
     e.place = {
       x: xdti(x, this.getWidth()),
     };
     this.pushEvent(e);
-    this.socket?.emit('board', suika.event.game.GameEvent.encode(e).finish());
+    this.socket?.emit('board', suika.Event.encode(e).finish());
   }
 }

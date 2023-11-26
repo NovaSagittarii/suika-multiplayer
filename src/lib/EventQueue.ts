@@ -2,7 +2,7 @@
 import { error } from 'console';
 import { suika } from '@/proto';
 
-export type GameEvent = suika.event.game.GameEvent;
+export type GameEvent = suika.Event;
 
 // Something
 export default class EventQueue {
@@ -11,10 +11,10 @@ export default class EventQueue {
   private lastEventPoppedTick: number;
 
   // Cache
-  private frontCache: suika.event.game.GameEvent | null;
+  private frontCache: suika.Event | null;
 
   // Buffer
-  private eventBuffer: Array<suika.event.game.GameEvent>;
+  private eventBuffer: Array<suika.Event>;
 
   constructor() {
     this.currentEventNumber = 0;
@@ -29,7 +29,7 @@ export default class EventQueue {
    * add event to queue
    * @param newEvent event to be pushed onto the buffer
    */
-  push(newEvent: suika.event.game.GameEvent): void {
+  push(newEvent: suika.Event): void {
     this.eventBuffer.push(newEvent);
   }
 
@@ -56,7 +56,7 @@ export default class EventQueue {
    * gets the front event from the buffer safely
    * @returns front event or nullf if none
    */
-  front(): suika.event.game.GameEvent | null {
+  front(): suika.Event | null {
     if (this.frontCache !== null) {
       return this.frontCache;
     } else {

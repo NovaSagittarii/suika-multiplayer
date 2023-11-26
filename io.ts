@@ -21,7 +21,7 @@ export function createIOServer(server: HttpServer) {
 
     // TODO: *remove* the spaghetti code the 1v1 gamering
     socket.on('board', (data) => {
-      const issues = suika.event.game.GameEvent.verify(data);
+      const issues = suika.Event.verify(data);
       if (issues === null) {
         socket.broadcast.emit('board', data);
       }

@@ -96,7 +96,7 @@ export default class Board extends BufferedEvents {
     while (q.canPop() && q.front()!.ticks <= this.ticks) {
       const event = q.front();
       q.pop();
-      switch (event?.event) {
+      switch (event?.eventType) {
         case 'place':
           this.place(xitd(event.place!.x!, this.width));
           break;
@@ -245,7 +245,7 @@ export default class Board extends BufferedEvents {
   createEvent(offset: number = 1) {
     if (offset <= 0) throw 'Board::createEvent - offset must be positive';
     if (this.id < 0) throw 'Board::createEvent - board is not initialized';
-    const event = suika.event.game.GameEvent.create();
+    const event = suika.Event.create();
     event.ticks = this.ticks + offset;
     event.target = this.id;
     return event;

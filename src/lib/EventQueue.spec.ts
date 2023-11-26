@@ -6,13 +6,13 @@ test('eventqueue example', () => {
   // Arrange
   const eq = new EventQueue();
 
-  const a = suika.event.game.GameEvent.create();
+  const a = suika.Event.create();
   a.id = 0;
 
-  const b = suika.event.game.GameEvent.create();
+  const b = suika.Event.create();
   b.id = 1;
 
-  const c = suika.event.game.GameEvent.create();
+  const c = suika.Event.create();
   c.id = 2;
 
   // Act
@@ -47,10 +47,10 @@ test('eventqueue empty pop', () => {
 test('eventqueue out of order events', () => {
   const eq = new EventQueue();
 
-  const a = suika.event.game.GameEvent.create();
+  const a = suika.Event.create();
   a.id = 0;
 
-  const b = suika.event.game.GameEvent.create();
+  const b = suika.Event.create();
   b.id = 1;
 
   expect(eq.empty()).toBe(true);

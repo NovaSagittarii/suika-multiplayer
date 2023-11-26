@@ -53,8 +53,8 @@ function App() {
     socket.on('message', (data) => console.info('[sockets]', data));
 
     socket.on('board', (data) => {
-      if (suika.event.game.GameEvent.verify(data) === null) {
-        const event = suika.event.game.GameEvent.decode(new Uint8Array(data));
+      if (suika.Event.verify(data) === null) {
+        const event = suika.Event.decode(new Uint8Array(data));
         if (!otherBoard.isInitialized()) {
           console.log('initialized otherboard with id', event.target);
           otherBoard.initialize(0, BOARD_WIDTH, BOARD_HEIGHT, event.target);

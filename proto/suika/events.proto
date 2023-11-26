@@ -1,14 +1,18 @@
 syntax = "proto3";
 
-package suika.event.game;
+/**
+ * Game-specific events
+ */
+package suika.event;
+
+import "config.proto";
 
 /**
  * Event that has the configuration for board initialization
  */
 message Initialize {
-  int32 seed = 1;
-  int32 width = 2;
-  int32 height = 3;
+  /// game configuration to set
+  suika.Config config = 1;
 }
 
 /** 

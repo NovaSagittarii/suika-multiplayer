@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package suika.event.game;
+package suika;
 
-import "event_game.proto";
+import "events.proto";
 
 /**
  * wrapper class for game events
  */
-message GameEvent {
+message Event {
   /// when an event happened
   int32 ticks = 1;
 
@@ -17,9 +17,9 @@ message GameEvent {
   /// which board the event is relevant to
   int32 target = 3;
 
-  oneof event {
-    suika.event.game.Place place = 4;
-    suika.event.game.Placing placing = 5;
-    suika.event.game.Receive receive = 6;
+  oneof event_type {
+    suika.event.Place place = 4;
+    suika.event.Placing placing = 5;
+    suika.event.Receive receive = 6;
   }
 }
