@@ -9,6 +9,16 @@ import "room.proto";
 import "member.proto";
 
 /**
+ * a request from a client to create a room
+ */
+message Create {
+  /**
+  * Visibility status of the room to be created
+  */
+  Visibility visibility = 1;
+}
+
+/**
  * Container for room listing request and response
  */
 message List {
