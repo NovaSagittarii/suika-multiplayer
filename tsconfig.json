@@ -18,7 +18,8 @@
     "typeRoots": ["node_modules/@types", "src/types"],
     "baseUrl": ".",
     "paths": {
-      "@/proto": ["build/bundle_proto"]
+      "@/proto": ["build/bundle_proto"],
+      "@/server/*": ["src/server/*"]
     }
   },
   "ts-node": {
