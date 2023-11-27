@@ -17,6 +17,7 @@ message Event {
 
   /// type of event the wrapper contains
   oneof event_type {
+    room.event.NewRoom new_room = 3;
     room.event.Create create = 4;
     room.event.List list = 5;
     room.event.Join join = 6;

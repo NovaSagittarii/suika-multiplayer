@@ -47,6 +47,16 @@ message Join {
 }
 
 /**
+ * Event to initialize client's room instance
+ */
+message NewRoom {
+  room.Room room = 1;
+
+  /// the member id of the client the server is sending to
+  int32 memberId = 2;
+}
+
+/**
  * Event when a client leaves a room
  */
 message Leave {
@@ -69,6 +79,6 @@ message UpdateMember {
  * when it starts is on the timestamp of the event wrapper
  */
 message Start {
-  /// (used by server) players that will be playing
+  /// (set by server) players that will be playing
   repeated room.Member players = 1;
 }

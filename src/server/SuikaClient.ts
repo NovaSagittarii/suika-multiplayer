@@ -1,5 +1,5 @@
-import Member from "./Member";
-import Room, { Visibility } from "./Room";
+import Member from './Member';
+import Room, { Visibility } from './Room';
 
 /**
  * utility class for the server to keep track of clients
@@ -9,7 +9,7 @@ export default class SuikaClient {
    * the member in the room this client is associated with
    */
   public member: Member | null = null;
-  
+
   /**
    * current room this client is a part of
    */
@@ -35,7 +35,8 @@ export default class SuikaClient {
    * @returns the room it created
    */
   createRoom(visibility: Visibility) {
-    const room = new Room(this.id, this.name, visibility);
+    const room = new Room(visibility);
+    room.addMember(this.id, this.name);
     this.room = room;
     this.member = room.getMember(this.id)!;
     return room;
