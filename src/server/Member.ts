@@ -1,8 +1,8 @@
-import { room } from "@/proto";
+import { room } from '@/proto';
 
 /**
  * Member of a room, associated with a client
- * 
+ *
  * Currently, this is very similar to the .proto file, but might change
  * in the future. (?)
  */
@@ -11,7 +11,7 @@ export default class Member {
   public readonly name: string;
   public active: boolean;
 
-  constructor (id: number, name: string, active: boolean = true) {
+  constructor(id: number, name: string, active: boolean = true) {
     this.id = id;
     this.name = name;
     this.active = active;
