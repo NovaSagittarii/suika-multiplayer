@@ -228,15 +228,27 @@ export default class Board extends BufferedEvents {
    */
   tick() {
     const event = this.eventBuffer.front();
+    console.log('board', this.id, 'ticks', this.ticks, 'event', event, 'buffer', this.eventBuffer);
     if (event) {
+      console.log(event.eventType);
+      if (event.eventType === undefined) {
+        console.log('requesting board state -2');
+        return -2;
+      }
       if (event.ticks > this.ticks) {
         // can advance simulation
         this.step();
+        console.log('event is in the future for board', this.id);
         return true;
       } else if (event.ticks == this.ticks) {
         // event to process
         this.drainEvents();
+        console.log('event is in the present for board', this.id);
+      } else {
+        console.log('event is in the past for board', this.id);
       }
+    } else {
+      console.log('no events for board', this.id);
     }
     return false;
   }

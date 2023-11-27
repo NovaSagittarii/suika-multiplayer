@@ -7,6 +7,8 @@ import PIXIBoard from './PIXIBoard';
 import { BOARD_HEIGHT, BOARD_WIDTH } from '../constants';
 import { ClientBoard } from './io';
 import { suika } from '@/proto';
+import { b } from 'vitest/dist/reporters-5f784f42';
+import { Socket } from 'socket.io';
 
 const board = new ClientBoard();
 const otherBoard = new Board();
@@ -31,7 +33,13 @@ function App() {
         board.step(); // step the physics engine for yourself if events were processed instead
       }
 
-      otherBoard.tick();
+      const otherTick = otherBoard.tick();
+      console.log('otherTick', otherTick);
+      if (otherTick === -2) {
+        // request boardstate from server
+        console.log('requesting boardstate');
+        board.requestBoardState(otherBoard.getId());
+      }
       otherBoard.tick(); // tick to catch up the physics engine
       otherBoard.tick(); // tick to catch up with events if you were lagging
     }
@@ -58,11 +66,13 @@ function App() {
       if (suika.Event.verify(data) === null) {
         const event = suika.Event.decode(new Uint8Array(data));
         if (!otherBoard.isInitialized()) {
+          console.log('my id', board.getId());
           console.log('initialized otherboard with id', event.target);
           otherBoard.initialize(0, BOARD_WIDTH, BOARD_HEIGHT, event.target);
           setTicks(ticks - 1);
         }
         if (event.target == otherBoard.getId()) {
+          console.log('accepted event', event);
           otherBoard.acceptEvent(event);
           setTicks(otherBoard.getTicks());
         }

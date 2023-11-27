@@ -40,4 +40,14 @@ export class ClientBoard extends Board {
     this.pushEvent(e);
     this.socket?.emit('board', suika.Event.encode(e).finish());
   }
+
+  public requestBoardState(id: number) {
+    const e = this.createEvent();
+    e.eventType = 'request';
+    e.request = {
+      request: 'BoardState',
+    }
+    console.log('requesting board state ' + e.id + ' from server ' + e.eventType);
+    this.socket?.emit('board', suika.Event.encode(e).finish());
+  }
 }

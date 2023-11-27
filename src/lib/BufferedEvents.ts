@@ -3,7 +3,7 @@ import EventQueue, { GameEvent } from './EventQueue';
 export abstract class BufferedEvents {
   protected events: number = 0;
   protected readonly eventBuffer: EventQueue = new EventQueue();
-  constructor() {}
+  constructor() { }
 
   /**
    * pushes an event into the event buffer (id is set)
@@ -21,6 +21,8 @@ export abstract class BufferedEvents {
    */
   public acceptEvent(event: GameEvent) {
     this.eventBuffer.push(event);
+    console.log(`accepted event ${event}`);
+    console.log('event buffer', this.eventBuffer);
   }
 
   /**

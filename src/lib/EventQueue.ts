@@ -59,12 +59,31 @@ export default class EventQueue {
     if (this.frontCache !== null) {
       return this.frontCache;
     } else {
+      if (this.eventBuffer.length === 0) {
+        return null;
+      }
+      const reqEvent = this.eventBuffer.find(
+        (iterEvent) => iterEvent.eventType === 'request',
+      ) || null;
+      if (reqEvent) {
+        console.log('request event found');
+      }
       const frontEvent =
         this.eventBuffer.find(
           (iterEvent) => iterEvent.id === this.currentEventNumber,
         ) || null;
       if (frontEvent) {
         this.frontCache = frontEvent;
+      } else {
+        const futureEvent = this.eventBuffer.find(
+          (iterEvent) => iterEvent.id > this.currentEventNumber,
+        ) || null;
+        // ask server for past events if there are events > currentEventNumber
+        if (futureEvent) {
+          const reqEvent = suika.Event.create();
+          return reqEvent;
+        }
+
       }
 
       return frontEvent;
