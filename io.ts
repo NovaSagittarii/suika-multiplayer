@@ -10,9 +10,21 @@ export function createIOServer(server: HttpServer) {
   const sockets = new Map<string, SuikaClient>();
   const rooms = new Map<number, Room>();
 
-  function broadcastToRoom(room: Room, data: any) {
+  // properly abstract this?
+  function broadcastToRoom(room: Room, event: proto.room.Event) {
     for (const [socketId, _member] of room.getMembers()) {
-      io.to(socketId as string).emit('room', data);
+      io.to(socketId as string).emit(
+        'room',
+        proto.room.Event.encode(event).finish(),
+      );
+    }
+  }
+  function broadcastBoardEventToRoom(room: Room, event: proto.suika.Event) {
+    for (const [socketId, _member] of room.getMembers()) {
+      io.to(socketId as string).emit(
+        'board',
+        proto.suika.Event.encode(event).finish(),
+      );
     }
   }
 
@@ -37,11 +49,10 @@ export function createIOServer(server: HttpServer) {
     sockets.set(socket.id, suikaClient);
 
     socket.on('room', (data) => {
-      console.log(socket.id, '[room]', proto.room.Event.verify(data));
       if (proto.room.Event.verify(data) === null) {
         const event = proto.room.Event.decode(new Uint8Array(data));
         const room = rooms.get(event.target);
-        console.log(socket.id, '[room]', event);
+        console.log(socket.id, `[room:${event.eventType}]`, event);
         switch (event.eventType) {
           case 'create': {
             console.log(suikaClient);
@@ -61,7 +72,8 @@ export function createIOServer(server: HttpServer) {
                 member: suikaClient.member!,
               };
               sendRoomDetails(socket, room);
-              broadcastToRoom(room, event);
+              // note: currently join does not work properly (overloaded with registering identity client)
+              // broadcastToRoom(room, event);
             }
             break;
           }
@@ -75,7 +87,7 @@ export function createIOServer(server: HttpServer) {
                 rooms.delete(room.id);
                 // remove room reference when no one's left
               } else {
-                broadcastToRoom(room, event);
+                // broadcastToRoom(room, event);
               }
             }
             break;
@@ -88,14 +100,17 @@ export function createIOServer(server: HttpServer) {
               rooms: listing,
             };
             socket.emit('room', proto.room.Event.encode(response).finish());
-            console.log('send list', response);
+            // console.log('send list', response);
             break;
           }
           case 'start':
           case 'updateConfig': {
+            if (!suikaClient.room) break;
+            event.target = suikaClient.room.id;
             const room = rooms.get(event.target);
+            console.log('[startevent:room]', room);
             // only the host is allowed to do this
-            if (room && suikaClient.member?.id !== room.getHost()) {
+            if (room && suikaClient.member?.id === room.getHost()) {
               if (event.start) {
                 event.start = {
                   players: [...room.getMembers()]
@@ -104,6 +119,7 @@ export function createIOServer(server: HttpServer) {
                 };
                 // set the members playing
               }
+              console.log('[startevent]', event.start);
               room.processEvent(event);
               broadcastToRoom(room, event);
               // broadcast
@@ -127,8 +143,11 @@ export function createIOServer(server: HttpServer) {
     // TODO: server to host instances for validation
     socket.on('board', (data) => {
       const issues = proto.suika.Event.verify(data);
-      if (issues === null) {
-        socket.broadcast.emit('board', data);
+      const { room } = suikaClient;
+      if (issues === null && suikaClient.member?.id && room) {
+        const event = proto.suika.Event.decode(new Uint8Array(data));
+        event.target = suikaClient.member?.id; // make sure target is correct
+        broadcastBoardEventToRoom(room, event);
       }
     });
 

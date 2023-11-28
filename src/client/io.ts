@@ -28,7 +28,9 @@ export class ClientBoard extends Board {
       x: xdti(x, this.getWidth()),
     };
     this.pushEvent(e);
-    this.socket?.emit('board', suika.Event.encode(e).finish());
+    if (this.socket === null)
+      throw new Error('socket is not initialized, cannot send event to server');
+    this.socket.emit('board', suika.Event.encode(e).finish());
   }
 
   public requestPlace(x: number) {
@@ -38,6 +40,8 @@ export class ClientBoard extends Board {
       x: xdti(x, this.getWidth()),
     };
     this.pushEvent(e);
-    this.socket?.emit('board', suika.Event.encode(e).finish());
+    if (this.socket === null)
+      throw new Error('socket is not initialized, cannot send event to server');
+    this.socket.emit('board', suika.Event.encode(e).finish());
   }
 }

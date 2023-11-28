@@ -18,6 +18,8 @@
     "typeRoots": ["node_modules/@types", "src/types"],
     "baseUrl": ".",
     "paths": {
+      "@/constants": ["src/constants"],
+      "@/lib/*": ["src/lib/*"],
       "@/proto": ["build/bundle_proto"],
       "@/server/*": ["src/server/*"]
     }

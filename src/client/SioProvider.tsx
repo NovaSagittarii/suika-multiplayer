@@ -7,11 +7,12 @@ import {
 } from 'react';
 import { io } from 'socket.io-client';
 import SioState from './SioState';
-import Board from 'src/lib/Board';
+import Board from '@/lib/Board';
 import { Action as SioAction } from './SioAction';
 import { ClientBoard } from './io';
 import * as proto from '@/proto';
 import Room from '@/server/Room';
+import { BOARD_HEIGHT, BOARD_WIDTH } from '@/constants';
 
 /**
  * context for the client state (regarding its connection to the server)
@@ -31,16 +32,18 @@ export const SioDispatchContext = createContext<Dispatch<SioAction> | null>(
 const boards = new Map<number, Board>();
 
 /**
- * reference to client board
+ * Keeps an instance of the clientBoard, a normal Board but doesn't respond
+ * to server events (reduce perceived latency), instead generates its own events
+ * and pushes them to the server.
  */
-const board = new ClientBoard();
+let clientBoard = new ClientBoard();
 
 export function SioProvider({ children }: PropsWithChildren<{}>) {
   const [state, dispatch] = useReducer(SioReducer, new SioState());
 
-  useEffect(() => {
-    console.log('[sio update]', state);
-  }, [state]);
+  // useEffect(() => {
+  //   console.log('[sio update]', state);
+  // }, [state]);
 
   function updateState(changes: SioState) {
     dispatch({
@@ -61,8 +64,10 @@ export function SioProvider({ children }: PropsWithChildren<{}>) {
 
     // socket event listeners
     socket.on('room', (data: ArrayBuffer) => {
+      // note: if you need to modify sioState (`state` in this scope), pass an action to the dispatch function
+      // instead since this state is constant and will never change. i don't know why but it's something with react.
       const event = proto.room.Event.decode(new Uint8Array(data));
-      console.log('recieved', event);
+      // console.log('[room] recieved', event);
       switch (event.eventType) {
         case 'newRoom': {
           // room settings arrived
@@ -105,13 +110,31 @@ export function SioProvider({ children }: PropsWithChildren<{}>) {
         case 'updateConfig':
           break;
         case 'start':
-          console.log('hey set up the game');
+          dispatch({
+            type: 'handleStart',
+            event,
+          });
           break;
       }
     });
 
+    socket.on('board', (data: ArrayBuffer) => {
+      const dataIssues = proto.suika.Event.verify(data);
+      if (dataIssues)
+        throw new Error(`[board] invalid event proto: ${dataIssues}`);
+      const event = proto.suika.Event.decode(new Uint8Array(data));
+      if (!event.target)
+        throw new Error(
+          `[board] event is missing target, got <${event.target}>`,
+        );
+      dispatch({
+        type: 'handleBoard',
+        event,
+      });
+    });
+
     return () => {
-      board.setSocket(null);
+      clientBoard.setSocket(null);
       socket.disconnect();
     };
   }, []);
@@ -130,11 +153,10 @@ function SioReducer(sio: SioState, action: SioAction) {
   if (action.type === 'set') {
     return { ...sio, ...action.stateUpdates };
   }
-  console.log(sio);
   if (sio.socket) {
     // depends on sio.socket
     // event to be sent to server at the end regarding room state
-    const event: proto.room.IEvent | null = proto.room.Event.create();
+    let event: proto.room.IEvent | null = proto.room.Event.create();
     switch (action.type) {
       case 'list': {
         event.list = {
@@ -162,11 +184,57 @@ function SioReducer(sio: SioState, action: SioAction) {
         };
         break;
       }
+      case 'handleStart':
+        event = null; // disable emit since this is handling an event; TODO: maybe send to server for "ready to start?"
+        {
+          const event = action.event;
+          if (!event.start) throw new Error('event is not of type start');
+          if (!event.start.players)
+            throw new Error('start event is missing players field');
+          if (!sio.memberId)
+            throw new Error(
+              'missing memberId on state, maybe never got it from server?',
+            );
+          console.log('[handleStart] setting up the game!', event.start);
+          boards.clear();
+          clientBoard = new ClientBoard();
+          clientBoard.setSocket(sio.socket);
+          clientBoard.initialize(0, BOARD_WIDTH, BOARD_HEIGHT, sio.memberId);
+          for (const player of event.start.players) {
+            if (player.id && player.name) {
+              const board = new Board();
+              boards.set(player.id, board);
+              // TODO: read room configuration (new options need to be added) and set it here
+              board.initialize(0, BOARD_WIDTH, BOARD_HEIGHT, player.id);
+            }
+          }
+          sio = { ...sio, boards, clientBoard };
+          break;
+        }
+      case 'handleBoard': {
+        event = null;
+        // this does not emit an event, just handles the board event
+        const targetBoard = sio.boards?.get(action.event.target);
+        if (targetBoard === undefined)
+          throw new Error(
+            '[board] client does not have target board allocated',
+          );
+        if (!targetBoard.isInitialized())
+          throw new Error('[board] target board exists but is not initialized');
+        targetBoard.acceptEvent(action.event);
+        break;
+      }
+      // if you're coming here because of an error, make sure the previous case block has a break/return
+      // i've made that mistake several times now... :moyai:
       default:
         throw Error(`unknown action <${action.type}>`);
     }
     if (event) {
-      console.log('send', event);
+      // console.log('send', event);
+      if (!sio.socket)
+        throw new Error(
+          'sio state socket is not initialized, it should be if it is receiving events',
+        );
       sio.socket.emit('room', proto.room.Event.encode(event).finish());
     }
   }

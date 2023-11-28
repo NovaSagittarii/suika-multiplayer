@@ -1,50 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
-import { Stage } from '@pixi/react';
 
 import Board from '../lib/Board';
-import PIXIBoard from './PIXIBoard';
 import { BOARD_HEIGHT, BOARD_WIDTH } from '../constants';
 import { ClientBoard } from './io';
 import { suika } from '@/proto';
 import { SioProvider } from './SioProvider';
 import RoomListing from './pages/RoomListing';
 import RoomDisplay from './pages/RoomDisplay';
-
-const board = new ClientBoard();
-const otherBoard = new Board();
+import BoardDisplay from './pages/BoardDisplay';
 
 function App() {
-  const requestRef = useRef<number>(0);
-  const [ticks, setTicks] = useState<number>(0);
-  const [mousePosition, setMousePosition] = useState([0, 0]);
-
-  // TODO: use time argument of animate callback for how many ticks?
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const animate = (time: number) => {
-    requestRef.current = requestAnimationFrame(animate);
-    // if (board.isInitialized() && otherBoard.isInitialized()) {
-    if (board.isInitialized()) {
-      setTicks(board.getTicks());
-      board.requestPlacing(mousePosition[0]);
-
-      // manual ticking
-      const wasTicked = board.tick();
-      if (!wasTicked) {
-        board.step(); // step the physics engine for yourself if events were processed instead
-      }
-
-      otherBoard.tick();
-      otherBoard.tick(); // tick to catch up the physics engine
-      otherBoard.tick(); // tick to catch up with events if you were lagging
-    }
-  };
-
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
-  }, [mousePosition]); // Make sure the effect runs only once
-
   // useEffect(() => {
   //   const socket = io({ transports: ['websocket'] });
   //   socket.on('connect', () => {
@@ -83,50 +48,7 @@ function App() {
       <div className='App bg-slate-800'>
         <RoomListing />
         <RoomDisplay />
-        <div className='flex align-middle w-full h-[100vh]'>
-          <Stage
-            className='m-auto w-full h-full object-contain block opacity-50 hover:opacity-100 transition-opacity'
-            onMouseMove={(e) => {
-              const { clientX, clientY } = e;
-              const x = clientX - e.currentTarget.offsetLeft;
-              const y = clientY - e.currentTarget.offsetTop;
-              // console.log(clientX, e.currentTarget.offsetLeft, x);
-              setMousePosition([(x + 80) / 20 - board.getWidth(), y / 20]);
-            }}
-            onMouseDown={() => {
-              board.requestPlace(mousePosition[0]);
-            }}
-          >
-            {board && (
-              <PIXIBoard
-                x={-80}
-                y={0}
-                ticks={ticks}
-                width={board.getWidth()}
-                height={board.getHeight()}
-                balls={board.getBalls()}
-                walls={board.getWalls()}
-                nextX={mousePosition[0]}
-                nextBall={board.getNextBall()}
-                debugText={board.getTicks() + ''}
-              />
-            )}
-            {otherBoard.isInitialized() && (
-              <PIXIBoard
-                x={320}
-                y={0}
-                ticks={ticks}
-                width={otherBoard.getWidth()}
-                height={otherBoard.getHeight()}
-                balls={otherBoard.getBalls()}
-                walls={otherBoard.getWalls()}
-                nextX={otherBoard.getInputX()}
-                nextBall={otherBoard.getNextBall()}
-                debugText={otherBoard.getTicks() + ''}
-              />
-            )}
-          </Stage>
-        </div>
+        <BoardDisplay />
       </div>
     </SioProvider>
   );
