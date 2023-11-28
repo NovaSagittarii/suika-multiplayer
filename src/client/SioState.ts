@@ -2,6 +2,7 @@ import { room } from '@/proto';
 import Room from '@/server/Room';
 import { Socket } from 'socket.io-client';
 import Board from 'src/lib/Board';
+import { ClientBoard } from './io';
 
 export default class SioState {
   /**
@@ -25,6 +26,11 @@ export default class SioState {
    * member id -> board mapping; used with memberId to find client's board
    */
   public boards?: Map<number, Board>;
+
+  /**
+   * clientBoard for this instance of a socketio connection
+   */
+  public clientBoard?: ClientBoard;
 
   public socket?: Socket | null;
 

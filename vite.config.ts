@@ -29,6 +29,14 @@ export default defineConfig({
         find: '@/server',
         replacement: resolve(__dirname, 'src/server'),
       },
+      {
+        find: '@/lib',
+        replacement: resolve(__dirname, 'src/lib'),
+      },
+      {
+        find: '@/constants',
+        replacement: resolve(__dirname, 'src/constants'),
+      },
     ],
   },
 });

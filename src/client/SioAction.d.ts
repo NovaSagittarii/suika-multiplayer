@@ -3,6 +3,7 @@
 import { Visibility } from '@/server/Room';
 import { Socket } from 'socket.io-client';
 import SioState from './SioState';
+import * as proto from '@/proto';
 
 /**
  * Unioned type that compasses all actions that can be dispatched to the
@@ -35,7 +36,9 @@ export namespace action {
     | room.List
     | room.Start
     | room.Config
-    | room.Member;
+    | room.Member
+    | room.HandleStart
+    | room.HandleBoard;
 
   /**
    * Socketio client actions regarding the room
@@ -72,6 +75,22 @@ export namespace action {
 
     export interface Member extends TargetsMemberId {
       type: 'member';
+    }
+
+    /**
+     * handler to call to set up and initialize boards
+     */
+    export interface HandleStart {
+      type: 'handleStart';
+      event: proto.room.Event;
+    }
+
+    /**
+     * handler to call to process board update events
+     */
+    export interface HandleBoard {
+      type: 'handleBoard';
+      event: proto.suika.Event;
     }
   }
 
