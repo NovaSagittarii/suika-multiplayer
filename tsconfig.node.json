@@ -7,5 +7,5 @@
       "allowSyntheticDefaultImports": true
     },
     "extends": ["./tsconfig.json"],
-    "include": ["index.ts", "io.ts", "vite.config.ts", "build", "src"]
+    "include": ["index.ts", "io.ts", "vite.config.mts", "build", "src"]
   }
