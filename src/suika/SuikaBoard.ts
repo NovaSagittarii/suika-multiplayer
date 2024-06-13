@@ -54,6 +54,16 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    */
   private rng = 0;
 
+  /**
+   * Whether this game is still ongoing
+   */
+  private active = true;
+
+  /**
+   * How many consecutive frames the board has been in a dead state.
+   */
+  private danger = 0;
+
   constructor() {
     super();
     this.board = new Board();
@@ -74,6 +84,22 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
         this.merge(o1, o2);
       }
     });
+
+    if (!this.isAlive()) {
+      ++this.danger;
+      if (this.danger >= 60) {
+        this.active = false;
+      }
+    } else {
+      this.danger = 0;
+    }
+  }
+
+  /**
+   * Steps only if active.
+   */
+  public stepIfActive() {
+    if (this.active) this.step();
   }
 
   /**
@@ -164,6 +190,30 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
   }
 
   /**
+   * Does a status check on the board.
+   * Current death condition: is when there is a ball
+   *  moving upwards or stationary such that its center is above the top (y=0).
+   * 
+   * TODO: a more lenient system such as a ball too high for some k frames
+   * @returns whether this board is still alive
+   */
+  private isAlive(): boolean {
+    for (const ball of this.getBalls()) {
+      const {x, y} = ball.translation();
+      if (y > 0) return false;
+    }
+    return true;
+  }
+
+  /**
+   * Returns whether this board is still active
+   * @returns this.active
+   */
+  public isActive(): boolean {
+    return this.active;
+  }
+
+  /**
    * Serializes the board. Keeps position, next, and ball data.
    * @returns encoded serialization of the board
    */
@@ -198,6 +248,7 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
     this.board = new Board();
     this.colliders.clear();
     this.largestBall = 0;
+    this.active = true;
   }
 
   /**

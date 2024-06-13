@@ -22,6 +22,7 @@ class Client {
 
     // attach inbound data processing eventlistener
     ws.on('message', (data: WebSocket.RawData) => {
+      if (!this.game.isActive()) return; // dead game
       const str = data.toString();
       const ex = parseInt(str.substring(1), 36);
       const x = decodeRange(ex, -BOARD_WIDTH / 2, BOARD_WIDTH / 2, 8);
