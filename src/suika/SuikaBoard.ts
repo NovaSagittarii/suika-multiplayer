@@ -22,16 +22,16 @@ class SuikaBoard {
    * rapier events to get processed
    */
   private eventQueue = new Rapier.EventQueue(true);
-  
+
   /**
    * the largest ball created, this determines the balls that can spawn
    */
   private largestBall = 0;
-  
+
   /**
    * x-position to place the next ball
    */
-  private x = 0;
+  private nx = 0;
 
   /**
    * RNG state, rehash to get next state
@@ -69,11 +69,20 @@ class SuikaBoard {
   }
 
   /**
+   * Updates the position where the next ball appears.
+   * @param nx
+   */
+  public setNx(nx: number) {
+    this.nx = nx;
+  }
+
+  /**
    * Places the next ball at the position at the top (y=0).
    * This updates the RNG state.
    * @param x position
    */
   public placeBall(x: number) {
+    this.setNx(x);
     this.createBall(x, 0, this.getNext());
     this.rng = hash(this.rng);
   }
@@ -129,11 +138,31 @@ class SuikaBoard {
     return this.board.getBalls().filter((x) => !x.isDisposed());
   }
 
+  /**
+   * Serializes the board. Keeps position, next, and ball data.
+   * @returns encoded serialization of the board
+   */
   public serialize() {
     const balls = this.getBalls().map((ball) =>
       ball.serialize(BOARD_WIDTH, BOARD_HEIGHT),
     );
-    return [balls.join(''), this.getNext()].join(' ');
+    return [this.nx, this.getNext(), balls.join('')].join(' ');
+  }
+
+  /**
+   * Deserializes the string representation of the board.
+   * @returns [nx, nextBall, balls]
+   */
+  public static deserialize(raw: string) {
+    const [enx, enext, eballs] = raw.split(' ');
+    const n = eballs.length;
+    const balls = new Array(n / 4)
+      .fill(0)
+      .map((_, i) => eballs.substring(i * 4, i * 4 + 4))
+      .map((s) => Ball.deserialize(s, BOARD_WIDTH, BOARD_HEIGHT));
+    const nx = +enx;
+    const next = +enext;
+    return [nx, next, balls] as [number, number, typeof balls];
   }
 
   /**

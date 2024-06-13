@@ -8,6 +8,7 @@ import { constrain, encodeRange } from '@/lib/util';
 import Ball from '@/suika/Ball';
 import P5 from 'p5';
 import drawBoard from './Board';
+import SuikaBoard from '@/suika/SuikaBoard';
 
 const sketch = (p5: P5) => {
   let nextBall = 0;
@@ -24,18 +25,13 @@ const sketch = (p5: P5) => {
     // console.log('rx', data.length);
     transmit.last = Date.now();
     transmit.sz = data.length;
-    const [eballs, eNext] = data.split(' ');
-    const n = eballs.length;
-    balls = new Array(n / 4)
-      .fill(0)
-      .map((_, i) => eballs.substring(i * 4, i * 4 + 4))
-      .map((s) => Ball.deserialize(s, BOARD_WIDTH, BOARD_HEIGHT));
-    nextBall = eNext;
-    // balls = parsed;
+    const [dnx, dnext, dballs] = SuikaBoard.deserialize(data);
+    nextBall = dnext;
+    balls = dballs;
   };
 
   p5.setup = () => {
-    const canvas = p5.createCanvas(400, 400);
+    const canvas = p5.createCanvas(800, 400);
     canvas.parent('root');
     p5.noStroke();
     p5.noSmooth();
@@ -68,6 +64,27 @@ const sketch = (p5: P5) => {
     p5.scale(10);
     drawBoard(p5, { balls, nextBall, nx });
     p5.pop();
+
+    // 1
+    // p5.push();
+    // p5.translate(600, 100);
+    // p5.scale(10);
+    // drawBoard(p5, {balls, nextBall, nx});
+    // p5.pop();
+
+    // 2-6
+    // p5.push();
+    // p5.translate(400, 100);
+    // for (var i = 0; i < 6; ++i) {
+    //   const ix = i % 3;
+    //   const iy = Math.floor(i / 3);
+    //   p5.push();
+    //   p5.translate(ix/3*400, iy/2*300);
+    //   p5.scale(5);
+    //   drawBoard(p5, {balls, nextBall, nx});
+    //   p5.pop();
+    // }
+    // p5.pop();
 
     p5.textSize(12);
     p5.fill(0);
