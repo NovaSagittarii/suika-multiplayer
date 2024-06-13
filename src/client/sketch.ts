@@ -90,10 +90,27 @@ const sketch = (p5: P5) => {
         // [2, 6]
         const ix = bi % 3;
         const iy = Math.floor(bi / 3);
-        p5.push();
         p5.translate(400, 100);
         p5.translate((ix / 3) * 400, (iy / 2) * 300);
         p5.scale(5);
+      } else if (otherBoards <= 32) {
+        // [7, 32]
+        const ix = bi % 8;
+        const iy = Math.floor(bi / 8);
+        p5.translate(400, 100);
+        p5.translate((ix / 8) * 400, (iy / 5) * 300);
+        p5.scale(2);
+      } else {
+        // 33+ just shows the first 32
+        const ix = bi % 8;
+        const iy = Math.floor(bi / 8);
+        p5.translate(400, 100);
+        p5.translate((ix / 8) * 400, (iy / 5) * 300);
+        p5.scale(2);
+        if (bi >= 32) {
+          p5.pop();
+          break;
+        }
       }
 
       // draw the other boards
