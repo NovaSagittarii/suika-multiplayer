@@ -1,7 +1,13 @@
-import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_DIAMETER, FRUIT_RADIUS } from '@/constants';
+import {
+  BOARD_HEIGHT,
+  BOARD_WIDTH,
+  FRUIT_DIAMETER,
+  FRUIT_RADIUS,
+} from '@/constants';
 import { constrain, encodeRange } from '@/lib/util';
 import Ball from '@/suika/Ball';
 import P5 from 'p5';
+import drawBoard from './Board';
 
 const sketch = (p5: P5) => {
   let nextBall = 0;
@@ -10,6 +16,7 @@ const sketch = (p5: P5) => {
     last: 0,
     sz: 0,
   };
+
   const ws = new WebSocket('ws://localhost:8080');
   ws.onopen = () => console.log('connected');
   ws.onclose = () => console.log('disconnected');
@@ -35,21 +42,23 @@ const sketch = (p5: P5) => {
     p5.rectMode(p5.CENTER);
     p5.textAlign(p5.CENTER, p5.CENTER);
   };
+
+  /**
+   * whether mouse pressed since last frame
+   */
   let mp = false;
   p5.mousePressed = () => (mp = true);
+
   p5.draw = () => {
     const { mouseX, mouseY } = p5;
 
-    p5.background(255);
+    p5.background(250);
 
-    p5.fill(0, 255, 0, 50);
-    p5.rect(200, 90, 10 * BOARD_WIDTH, 15);
     const mlo = 200 - 5 * BOARD_WIDTH;
     const mhi = 200 + 5 * BOARD_WIDTH;
     const mx = constrain(mouseX, mlo, mhi);
-    p5.ellipse(mx, 100, 10*FRUIT_DIAMETER[nextBall], 10*FRUIT_DIAMETER[nextBall]);
-    p5.fill(0);
-    p5.text(nextBall, mx, 100);
+    const nx = p5.map(mx, mlo, mhi, -BOARD_WIDTH / 2, BOARD_WIDTH / 2);
+
     if (mp) {
       ws.send(encodeRange(mx, mlo, mhi, 8).toString(36));
     }
@@ -57,17 +66,7 @@ const sketch = (p5: P5) => {
     p5.push();
     p5.translate(200, 100);
     p5.scale(10);
-
-    p5.fill(0, 10);
-    p5.rect(0, BOARD_HEIGHT / 2, BOARD_WIDTH, BOARD_HEIGHT);
-
-    p5.textSize(1.2);
-    for (const [x, y, t] of balls) {
-      p5.fill(255, 0, 0, 100);
-      p5.ellipse(x, -y, FRUIT_DIAMETER[t], FRUIT_DIAMETER[t]);
-      p5.fill(0);
-      p5.text(t, x, -y);
-    }
+    drawBoard(p5, { balls, nextBall, nx });
     p5.pop();
 
     p5.textSize(12);
