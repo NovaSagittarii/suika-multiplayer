@@ -38,7 +38,10 @@ class SuikaMultiplayerServer {
       });
 
       const game = new SuikaBoard();
-      game.createBall(0, 0, 0);
+      for (let i = 0; i < 20000; ++i) {
+        if (i % 10 === 0) game.createBall(Math.random(), 0, 0);
+        game.step();
+      }
       setInterval(() => game.createBall(Math.random(), 0, 0), 100);
       setInterval(() => {
         game.step();

@@ -50,7 +50,7 @@ export default class Ball extends DynamicEntity {
     const { x, y } = this.translation();
     const { type } = this;
     const ex = encodeRange(x, -BOARD_WIDTH/2, BOARD_WIDTH/2, 8);
-    const ey = encodeRange(y, -BOARD_HEIGHT, 0, 8);
+    const ey = encodeRange(y, -BOARD_HEIGHT, BOARD_HEIGHT/8, 8);
     // type is [0, 13] so it fits in 4 bytes
     const enc = (ex << 12) | (ey << 4) | type;
     return enc.toString(36).padStart(4, "0"); // 2^20 <= 36^4
@@ -69,7 +69,7 @@ export default class Ball extends DynamicEntity {
     const ey = (enc >> 4) & 0xFF;
     const et = enc & 0xF;
     const x = decodeRange(ex, -BOARD_WIDTH/2, BOARD_WIDTH/2, 8);
-    const y = decodeRange(ey, -BOARD_HEIGHT, 0, 8);
+    const y = decodeRange(ey, -BOARD_HEIGHT, BOARD_HEIGHT/8, 8);
     return [x, y, et];
   }
 }
