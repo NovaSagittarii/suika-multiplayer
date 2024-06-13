@@ -3,7 +3,7 @@ import Rapier from '@/lib/RapierInstance';
 import Board from '@/suika/Board';
 import Ball from '@/suika/Ball';
 import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_TYPES } from '@/constants';
-import { encodeRange, hash } from '@/lib/util';
+import { constrain, encodeRange, hash } from '@/lib/util';
 
 /**
  * Represents one full game. This handles the game logic.
@@ -64,7 +64,7 @@ class SuikaBoard {
    * @returns next ball type
    */
   public getNext() {
-    const largestAllowed = Math.max(0, this.largestBall - 4);
+    const largestAllowed = constrain(this.largestBall - 1, 2, FRUIT_TYPES - 5);
     return Math.abs(this.rng) % (largestAllowed + 1);
   }
 
