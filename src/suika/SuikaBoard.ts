@@ -211,7 +211,7 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
   private isAlive(): boolean {
     for (const ball of this.getBalls()) {
       const { x, y } = ball.translation();
-      if (y > 0 && ball.linvel().y > 0) return false;
+      if (y > 0 && ball.linvel().y >= 0) return false;
     }
     return true;
   }
