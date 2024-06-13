@@ -9,11 +9,20 @@ import p5 from 'p5';
  * @param x
  * @param y
  * @param type
+ * @param active
  */
-function drawBall(p5: p5, x: number, y: number, type: number) {
+function drawBall(
+  p5: p5,
+  x: number,
+  y: number,
+  type: number,
+  active: boolean = true,
+) {
   p5.ellipse(x, y, FRUIT_DIAMETER[type], FRUIT_DIAMETER[type]);
-  p5.fill(0);
-  p5.text(type, x, y);
+  if (active) {
+    p5.fill(0);
+    p5.text(type, x, y);
+  }
 }
 
 /**
@@ -39,6 +48,6 @@ export default function drawBoard(
     } else {
       p5.fill(0, 100);
     }
-    drawBall(p5, x, -y, t);
+    drawBall(p5, x, -y, t, a);
   }
 }
