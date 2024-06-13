@@ -32,7 +32,7 @@ function drawBall(
  */
 export default function drawBoard(
   p5: p5,
-  [nx, nextBall, balls]: ReturnType<typeof SuikaBoard.deserialize>,
+  [nx, nextBall, balls, danger]: ReturnType<typeof SuikaBoard.deserialize>,
 ) {
   p5.textSize(1.2);
 
@@ -41,6 +41,10 @@ export default function drawBoard(
 
   p5.fill(0, 10);
   p5.rect(0, BOARD_HEIGHT / 2, BOARD_WIDTH, BOARD_HEIGHT);
+
+  p5.fill(255, 0, 0, 100);
+  const d = danger / 60;
+  p5.rect((-BOARD_WIDTH / 2) * (1-d), BOARD_HEIGHT + 1, BOARD_WIDTH * d, 2);
 
   for (const [x, y, t, a] of balls) {
     if (a) {

@@ -193,14 +193,14 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    * Does a status check on the board.
    * Current death condition: is when there is a ball
    *  moving upwards or stationary such that its center is above the top (y=0).
-   * 
+   *
    * TODO: a more lenient system such as a ball too high for some k frames
    * @returns whether this board is still alive
    */
   private isAlive(): boolean {
     for (const ball of this.getBalls()) {
-      const {x, y} = ball.translation();
-      if (y > 0) return false;
+      const { x, y } = ball.translation();
+      if (y > 0 && ball.linvel().y > 0) return false;
     }
     return true;
   }
@@ -221,7 +221,7 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
     const balls = this.getBalls().map((ball) =>
       ball.serialize(BOARD_WIDTH, BOARD_HEIGHT),
     );
-    return [this.nx, this.getNext(), balls.join('')].join(' ');
+    return [this.nx, this.getNext(), balls.join(''), this.danger].join(' ');
   }
 
   /**
@@ -229,7 +229,7 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    * @returns [nx, nextBall, balls]
    */
   public static deserialize(raw: string) {
-    const [enx, enext, eballs] = raw.split(' ');
+    const [enx, enext, eballs, edanger] = raw.split(' ');
     const n = eballs.length;
     const balls = new Array(n / 4)
       .fill(0)
@@ -237,7 +237,8 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
       .map((s) => Ball.deserialize(s, BOARD_WIDTH, BOARD_HEIGHT));
     const nx = +enx;
     const next = +enext;
-    return [nx, next, balls] as [number, number, typeof balls];
+    const danger = +edanger;
+    return [nx, next, balls, danger] as [number, number, typeof balls, number];
   }
 
   /**

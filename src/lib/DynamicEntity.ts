@@ -58,4 +58,8 @@ export default class DynamicEntity extends DisposableEntity {
   translation() {
     return this.rigidBody.translation();
   }
+
+  linvel() {
+    return this.rigidBody.linvel();
+  }
 }
