@@ -24,14 +24,12 @@ class SuikaMultiplayerServer {
    * @returns Nothing upon server shutdown, but this shouldn't happen.
    */
   public async run(wss: WebSocketServer): Promise<void> {
-    const game = new SuikaBoard();
-    for (let i = 0; i < 1000; ++i) {
-      if (i % 10 === 0) game.createBall(Math.random(), 0, 0);
-      game.step();
-    }
+    const games: SuikaBoard[] = [];
+
+    // Run update loop
     setInterval(() => {
-      game.step();
-      const payload = game.serialize();
+      for (const game of games) game.step();
+      const payload = JSON.stringify(games.map((game) => game.serialize()));
       wss.clients.forEach((ws) => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(payload);
@@ -49,13 +47,31 @@ class SuikaMultiplayerServer {
       }
 
       wss.on('connection', (ws: WebSocket, request) => {
-        console.log(`new connection from <${request.socket.remoteAddress}>`);
+        // Create new game instance and notify client about their player ID
+        const pid = games.length;
+        ws.send(`!${pid}`);
+        const game = new SuikaBoard();
+        games.push(game);
+
+        const addr = request.socket.remoteAddress;
+        console.log(`new connection from <${addr}> as <#${pid}>`);
+
         ws.on('error', console.error);
+
+        // Process placement data
         ws.on('message', (data: WebSocket.RawData) => {
-          const ex = parseInt(data.toString(), 36);
-          const x = decodeRange(ex, -BOARD_WIDTH/2, BOARD_WIDTH/2, 8);
-          game.placeBall(x);
+          const str = data.toString();
+          const ex = parseInt(str.substring(1), 36);
+          const x = decodeRange(ex, -BOARD_WIDTH / 2, BOARD_WIDTH / 2, 8);
+          if (str[0] === '?') {
+            // update nx
+            game.setNx(x);
+          } else if (str[0] === '!') {
+            // place instead
+            game.placeBall(x);
+          }
         });
+        ws.on('close', () => console.log(`disconnect <#${pid}>`));
       });
     });
   }

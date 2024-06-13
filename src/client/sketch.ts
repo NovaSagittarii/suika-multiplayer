@@ -1,18 +1,15 @@
-import {
-  BOARD_HEIGHT,
-  BOARD_WIDTH,
-  FRUIT_DIAMETER,
-  FRUIT_RADIUS,
-} from '@/constants';
+import { BOARD_WIDTH } from '@/constants';
 import { constrain, encodeRange } from '@/lib/util';
-import Ball from '@/suika/Ball';
 import P5 from 'p5';
 import drawBoard from './Board';
 import SuikaBoard from '@/suika/SuikaBoard';
 
 const sketch = (p5: P5) => {
-  let nextBall = 0;
-  let balls = [] as [number, number, number][];
+  /**
+   * Player id, unset initially until after connecting.
+   */
+  let pid = -1;
+  let boards: ReturnType<typeof SuikaBoard.deserialize>[] = [];
   let transmit = {
     last: 0,
     sz: 0,
@@ -25,9 +22,13 @@ const sketch = (p5: P5) => {
     // console.log('rx', data.length);
     transmit.last = Date.now();
     transmit.sz = data.length;
-    const [dnx, dnext, dballs] = SuikaBoard.deserialize(data);
-    nextBall = dnext;
-    balls = dballs;
+    if (data[0] === '!') {
+      pid = +data.substring(1);
+      console.log('set pid', pid);
+    } else {
+      const d = JSON.parse(data) as string[];
+      boards = d.map((x) => SuikaBoard.deserialize(x));
+    }
   };
 
   p5.setup = () => {
@@ -53,38 +54,54 @@ const sketch = (p5: P5) => {
     const mlo = 200 - 5 * BOARD_WIDTH;
     const mhi = 200 + 5 * BOARD_WIDTH;
     const mx = constrain(mouseX, mlo, mhi);
-    const nx = p5.map(mx, mlo, mhi, -BOARD_WIDTH / 2, BOARD_WIDTH / 2);
+    const emx = encodeRange(mx, mlo, mhi, 8).toString(36);
 
-    if (mp) {
-      ws.send(encodeRange(mx, mlo, mhi, 8).toString(36));
+    if (ws.readyState === ws.OPEN) {
+      if (mp) {
+        ws.send('!' + emx);
+      } else {
+        ws.send('?' + emx);
+      }
     }
+
+    const nx = p5.map(mx, mlo, mhi, -BOARD_WIDTH / 2, BOARD_WIDTH / 2);
 
     p5.push();
     p5.translate(200, 100);
     p5.scale(10);
-    drawBoard(p5, { balls, nextBall, nx });
+    if (pid !== -1 && boards[pid]) {
+      const [nx, nextBall, balls] = boards[pid];
+      drawBoard(p5, { balls, nextBall, nx });
+    }
     p5.pop();
 
-    // 1
-    // p5.push();
-    // p5.translate(600, 100);
-    // p5.scale(10);
-    // drawBoard(p5, {balls, nextBall, nx});
-    // p5.pop();
+    const otherBoards = boards.length - (boards[pid] ? 1 : 0);
+    let bi = 0;
+    for (let b = 0; b < boards.length; ++b) {
+      if (b === pid) continue;
+      p5.push();
 
-    // 2-6
-    // p5.push();
-    // p5.translate(400, 100);
-    // for (var i = 0; i < 6; ++i) {
-    //   const ix = i % 3;
-    //   const iy = Math.floor(i / 3);
-    //   p5.push();
-    //   p5.translate(ix/3*400, iy/2*300);
-    //   p5.scale(5);
-    //   drawBoard(p5, {balls, nextBall, nx});
-    //   p5.pop();
-    // }
-    // p5.pop();
+      // how to do positioning
+      if (otherBoards === 1) {
+        // [1, 1]
+        p5.translate(600, 100);
+        p5.scale(10);
+      } else if (otherBoards <= 6) {
+        // [2, 6]
+        const ix = bi % 3;
+        const iy = Math.floor(bi / 3);
+        p5.push();
+        p5.translate(400, 100);
+        p5.translate((ix / 3) * 400, (iy / 2) * 300);
+        p5.scale(5);
+      }
+
+      // draw the other boards
+      const [nx, nextBall, balls] = boards[b];
+      drawBoard(p5, { balls, nextBall, nx });
+      p5.pop();
+      ++bi;
+    }
 
     p5.textSize(12);
     p5.fill(0);
