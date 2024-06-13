@@ -11,7 +11,8 @@ import SuikaBoard from '@/suika/SuikaBoard';
  */
 class Client {
   private ws: WebSocket;
-  private game: SuikaBoard = new SuikaBoard();
+  // TODO: maybe client should extend SuikaBoard instead?
+  public readonly game: SuikaBoard = new SuikaBoard();
   private pid: number = -1;
 
   constructor(ws: WebSocket) {
@@ -54,6 +55,10 @@ class Client {
       this.ws.send('!' + pid);
     }
     this.pid = pid;
+  }
+
+  public getPid() {
+    return this.pid;
   }
 
   /**

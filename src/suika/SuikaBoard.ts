@@ -259,6 +259,7 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    * the entire SuikaBoard is no longer needed, such as player disconnect.
    */
   public free() {
+    this.active = false;
     this.board.free();
     this.eventQueue.free();
   }

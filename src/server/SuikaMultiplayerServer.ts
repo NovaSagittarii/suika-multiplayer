@@ -24,23 +24,25 @@ class SuikaMultiplayerServer {
    * @returns Nothing upon server shutdown, but this shouldn't happen.
    */
   public async run(wss: WebSocketServer): Promise<void> {
-    const games: SuikaBoard[] = [];
+    const clients: Client[] = [];
 
     // Run update loop
     setInterval(() => {
       // const t_ = performance.now();
-      
+
       let active = 0;
-      for (const game of games) {
+      for (const { game } of clients) {
         game.stepIfActive();
         if (game.isActive()) ++active;
       }
-      if (active <= 1 && games.length > 1) {
+      if (active <= 1 && clients.length > 1) {
         // one player alive and at least 2 players
-        for (const game of games) game.reset();
+        for (const { game } of clients) game.reset();
       }
-      
-      const payload = JSON.stringify(games.map((game) => game.serialize()));
+
+      const payload = JSON.stringify(
+        clients.map((client) => client.game.serialize()),
+      );
       wss.clients.forEach((ws) => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(payload);
@@ -66,31 +68,39 @@ class SuikaMultiplayerServer {
       wss.on('connection', (ws: WebSocket, request) => {
         // Create new game instance and notify client about their player ID
         const addr = request.socket.remoteAddress;
-        const pid = games.length;
+        const pid = clients.length;
         console.log(`new connection from <${addr}> as <#${pid}>`);
 
         // ws should be OPEN upon connection
         const client = new Client(ws);
         const game = client.startGame();
-        games[pid] = game;
+        clients[pid] = client;
         client.setPid(pid);
 
         game.on('merge', (mergeType) => {
           // send damage to another person
-          if (games.length > 1) {
+          if (clients.length > 1) {
             // make sure another person exists
-            const rng = Math.floor(Math.random() * (games.length - 1));
-            const target = rng + (rng >= pid ? 1 : 0);
+            const rng = Math.floor(Math.random() * (clients.length - 1));
+            const target = rng + (rng >= client.getPid() ? 1 : 0);
             if (mergeType >= 4) {
               for (let i = 0; i < 3; ++i) {
-                games[target].injectGarbage(mergeType - 4);
+                clients[target].game.injectGarbage(mergeType - 4);
               }
             }
           }
         });
 
         ws.on('error', console.error);
-        ws.on('close', () => console.log(`disconnect <#${pid}>`));
+        ws.on('close', () => {
+          console.log(`disconnect <#${pid}>`);
+          // swap with last person
+          clients[pid] = clients[clients.length - 1];
+          clients[pid].setPid(pid);
+          clients.pop();
+          // clean up yourself
+          client?.game.free();
+        });
       });
     });
   }
