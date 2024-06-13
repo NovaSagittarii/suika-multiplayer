@@ -28,6 +28,7 @@ class SuikaMultiplayerServer {
 
     // Run update loop
     setInterval(() => {
+      // const t_ = performance.now();
       for (const game of games) game.step();
       const payload = JSON.stringify(games.map((game) => game.serialize()));
       wss.clients.forEach((ws) => {
@@ -35,6 +36,12 @@ class SuikaMultiplayerServer {
           ws.send(payload);
         }
       });
+      // visualize server load
+      // const t = performance.now() - t_;
+      // const TT = t.toFixed(1).padStart(4);
+      // const TP = (t/16*100).toFixed(1).padStart(5);
+      // const BAR = "=".repeat(Math.min(Math.round(t/16*25), 30)).padEnd(25);
+      // console.log(`${TT}ms ${TP}% [${BAR}]`);
     }, 16);
 
     return new Promise((resolve, reject) => {
