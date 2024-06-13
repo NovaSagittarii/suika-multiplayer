@@ -70,7 +70,7 @@ const sketch = (p5: P5) => {
     p5.translate(200, 100);
     p5.scale(10);
     if (pid !== -1 && boards[pid]) {
-      const [nx, nextBall, balls] = boards[pid];
+      const [_nx, nextBall, balls] = boards[pid];
       drawBoard(p5, { balls, nextBall, nx });
     }
     p5.pop();
