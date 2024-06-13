@@ -39,6 +39,13 @@ class Board {
   }
 
   /**
+   * @returns a list of all balls in the board
+   */
+  public getBalls() {
+    return this.balls as readonly Ball[];
+  }
+
+  /**
    * Creates a ball of a specific type at a fixed location.
    * @param x position of ball
    * @param y position of ball
@@ -53,9 +60,10 @@ class Board {
 
   /**
    * Advance the board simulation by one time step.
+   * @param eventQueue collision events will be sent here if defined
    */
-  public step() {
-    this.world.step();
+  public step(eventQueue: RAPIER.EventQueue | undefined = undefined) {
+    this.world.step(eventQueue);
   }
 }
 

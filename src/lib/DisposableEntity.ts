@@ -12,6 +12,10 @@ export default class DisposableEntity {
     this.disposed = false;
   }
 
+  isDisposed() {
+    return this.disposed;
+  }
+
   /**
    * call to mark for disposal, returns true if already disposed
    * @returns whether it had been disposed already
