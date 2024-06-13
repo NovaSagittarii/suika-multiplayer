@@ -2,7 +2,8 @@ import DynamicEntity, { ColliderHandlerMap } from '@/lib/DynamicEntity';
 import Rapier from '@/lib/RapierInstance';
 import Board from '@/suika/Board';
 import Ball from '@/suika/Ball';
-import { FRUIT_TYPES } from '@/constants';
+import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_TYPES } from '@/constants';
+import { encodeRange } from '@/lib/util';
 
 /**
  * Represents one full game. This handles the game logic.
@@ -83,6 +84,13 @@ class SuikaBoard {
    */
   public getBalls() {
     return this.board.getBalls().filter((x) => !x.isDisposed());
+  }
+
+  public serialize() {
+    const balls = this.getBalls().map((ball) =>
+      ball.serialize(BOARD_WIDTH, BOARD_HEIGHT),
+    );
+    return balls.join('');
   }
 
   /**

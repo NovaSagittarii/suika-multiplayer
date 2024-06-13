@@ -14,6 +14,9 @@ export default defineConfig({
       // clientPort: 443,
       // path: "/vite-hmr"
     },
+    cors: {
+      origin: [/^http:\/\/localhost/],
+    }
   },
   resolve: {
     alias: [

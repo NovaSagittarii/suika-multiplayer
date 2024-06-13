@@ -1,3 +1,4 @@
+import SuikaBoard from '@/suika/SuikaBoard';
 import WebSocket, { WebSocketServer, AddressInfo } from 'ws';
 
 /**
@@ -35,6 +36,19 @@ class SuikaMultiplayerServer {
         ws.on('error', console.error);
         ws.on('message', (data: WebSocket.RawData) => {});
       });
+
+      const game = new SuikaBoard();
+      game.createBall(0, 0, 0);
+      setInterval(() => game.createBall(Math.random(), 0, 0), 100);
+      setInterval(() => {
+        game.step();
+        const payload = game.serialize();
+        wss.clients.forEach((ws) => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(payload);
+          }
+        });
+      }, 16);
     });
   }
 }
