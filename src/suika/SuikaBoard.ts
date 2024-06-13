@@ -3,16 +3,40 @@ import Rapier from '@/lib/RapierInstance';
 import Board from '@/suika/Board';
 import Ball from '@/suika/Ball';
 import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_TYPES } from '@/constants';
-import { encodeRange } from '@/lib/util';
+import { encodeRange, hash } from '@/lib/util';
 
 /**
  * Represents one full game. This handles the game logic.
  */
 class SuikaBoard {
   private board: Board;
+
+  /**
+   * Map of active colliders. When balls tracked here collide with
+   * the same radius, they'll merge. If you spawn a ball without
+   * tracking it, then it can't merge.
+   */
   private colliders: ColliderHandlerMap = new Map<number, DynamicEntity>();
+
+  /**
+   * rapier events to get processed
+   */
   private eventQueue = new Rapier.EventQueue(true);
+  
+  /**
+   * the largest ball created, this determines the balls that can spawn
+   */
   private largestBall = 0;
+  
+  /**
+   * x-position to place the next ball
+   */
+  private x = 0;
+
+  /**
+   * RNG state, rehash to get next state
+   */
+  private rng = 0;
 
   constructor() {
     this.board = new Board();
@@ -33,6 +57,25 @@ class SuikaBoard {
         this.merge(o1, o2);
       }
     });
+  }
+
+  /**
+   * Returns the next ball type based on the RNG state.
+   * @returns next ball type
+   */
+  public getNext() {
+    const largestAllowed = Math.max(0, this.largestBall - 4);
+    return Math.abs(this.rng) % (largestAllowed + 1);
+  }
+
+  /**
+   * Places the next ball at the position at the top (y=0).
+   * This updates the RNG state.
+   * @param x position
+   */
+  public placeBall(x: number) {
+    this.createBall(x, 0, this.getNext());
+    this.rng = hash(this.rng);
   }
 
   /**
@@ -90,7 +133,7 @@ class SuikaBoard {
     const balls = this.getBalls().map((ball) =>
       ball.serialize(BOARD_WIDTH, BOARD_HEIGHT),
     );
-    return balls.join('');
+    return [balls.join(''), this.getNext()].join(' ');
   }
 
   /**

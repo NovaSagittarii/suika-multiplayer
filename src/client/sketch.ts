@@ -1,9 +1,10 @@
-import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_DIAMETER } from '@/constants';
+import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_DIAMETER, FRUIT_RADIUS } from '@/constants';
 import { constrain, encodeRange } from '@/lib/util';
 import Ball from '@/suika/Ball';
 import P5 from 'p5';
 
 const sketch = (p5: P5) => {
+  let nextBall = 0;
   let balls = [] as [number, number, number][];
   let transmit = {
     last: 0,
@@ -16,11 +17,13 @@ const sketch = (p5: P5) => {
     // console.log('rx', data.length);
     transmit.last = Date.now();
     transmit.sz = data.length;
-    const n = data.length;
+    const [eballs, eNext] = data.split(' ');
+    const n = eballs.length;
     balls = new Array(n / 4)
       .fill(0)
-      .map((_, i) => data.substring(i * 4, i * 4 + 4))
+      .map((_, i) => eballs.substring(i * 4, i * 4 + 4))
       .map((s) => Ball.deserialize(s, BOARD_WIDTH, BOARD_HEIGHT));
+    nextBall = eNext;
     // balls = parsed;
   };
 
@@ -44,7 +47,9 @@ const sketch = (p5: P5) => {
     const mlo = 200 - 5 * BOARD_WIDTH;
     const mhi = 200 + 5 * BOARD_WIDTH;
     const mx = constrain(mouseX, mlo, mhi);
-    p5.ellipse(mx, 90, 5, 5);
+    p5.ellipse(mx, 100, 10*FRUIT_DIAMETER[nextBall], 10*FRUIT_DIAMETER[nextBall]);
+    p5.fill(0);
+    p5.text(nextBall, mx, 100);
     if (mp) {
       ws.send(encodeRange(mx, mlo, mhi, 8).toString(36));
     }

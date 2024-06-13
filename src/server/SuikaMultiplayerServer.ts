@@ -25,7 +25,7 @@ class SuikaMultiplayerServer {
    */
   public async run(wss: WebSocketServer): Promise<void> {
     const game = new SuikaBoard();
-    for (let i = 0; i < 20000; ++i) {
+    for (let i = 0; i < 1000; ++i) {
       if (i % 10 === 0) game.createBall(Math.random(), 0, 0);
       game.step();
     }
@@ -54,7 +54,7 @@ class SuikaMultiplayerServer {
         ws.on('message', (data: WebSocket.RawData) => {
           const ex = parseInt(data.toString(), 36);
           const x = decodeRange(ex, -BOARD_WIDTH/2, BOARD_WIDTH/2, 8);
-          game.createBall(x, 0, 0);
+          game.placeBall(x);
         });
       });
     });
