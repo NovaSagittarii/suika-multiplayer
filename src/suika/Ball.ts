@@ -81,11 +81,11 @@ export default class Ball extends DynamicEntity {
     raw: string,
     BOARD_WIDTH: number,
     BOARD_HEIGHT: number,
-  ): [number, number, number, number] {
+  ): [number, number, number, boolean] {
     const enc = parseInt(raw, 36);
     const ex = (enc >> 13) & 0xff;
     const ey = (enc >> 5) & 0xff;
-    const ea = (enc >> 4) & 0x1;
+    const ea = !!((enc >> 4) & 0x1);
     const et = enc & 0xf;
     const x = decodeRange(ex, -BOARD_WIDTH / 2, BOARD_WIDTH / 2, 7);
     const y = decodeRange(ey, -BOARD_HEIGHT, BOARD_HEIGHT / 8, 8);
