@@ -54,7 +54,7 @@ const sketch = (p5: P5) => {
 
     p5.textSize(12);
     p5.fill(0);
-    p5.text(`rx ${transmit.sz} ${Date.now() - transmit.last} ms ago`, 200, 50);
+    p5.text(`rx ${transmit.sz} ${(Date.now() - transmit.last).toString().padStart(2, '0')} ms ago`, 200, 50);
   };
 };
 
