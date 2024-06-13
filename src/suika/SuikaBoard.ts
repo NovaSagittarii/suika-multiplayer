@@ -168,11 +168,22 @@ class SuikaBoard {
   /**
    * Resets the board by disposing of the old one and instantiating a new one.
    */
-  private resetBoard() {
+  public reset() {
     this.board.free();
     this.board = new Board();
     this.colliders.clear();
     this.largestBall = 0;
+  }
+
+  /**
+   * Frees up all WASM allocated objects.
+   *
+   * This discards the board without creating a new one. Use this only when
+   * the entire SuikaBoard is no longer needed, such as player disconnect.
+   */
+  public free() {
+    this.board.free();
+    this.eventQueue.free();
   }
 }
 

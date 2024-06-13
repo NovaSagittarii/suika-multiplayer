@@ -1,7 +1,7 @@
-import { BOARD_WIDTH } from '@/constants';
-import { decodeRange } from '@/lib/util';
-import SuikaBoard from '@/suika/SuikaBoard';
 import WebSocket, { WebSocketServer, AddressInfo } from 'ws';
+
+import SuikaBoard from '@/suika/SuikaBoard';
+import Client from '@/server/Client';
 
 /**
  * TODO: Used in the future for server configuration.
@@ -55,29 +55,17 @@ class SuikaMultiplayerServer {
 
       wss.on('connection', (ws: WebSocket, request) => {
         // Create new game instance and notify client about their player ID
-        const pid = games.length;
-        ws.send(`!${pid}`);
-        const game = new SuikaBoard();
-        games.push(game);
-
         const addr = request.socket.remoteAddress;
+        const pid = games.length;
         console.log(`new connection from <${addr}> as <#${pid}>`);
 
-        ws.on('error', console.error);
+        // ws should be OPEN upon connection
+        const client = new Client(ws);
+        const game = client.startGame();
+        games[pid] = game;
+        client.setPid(pid);
 
-        // Process placement data
-        ws.on('message', (data: WebSocket.RawData) => {
-          const str = data.toString();
-          const ex = parseInt(str.substring(1), 36);
-          const x = decodeRange(ex, -BOARD_WIDTH / 2, BOARD_WIDTH / 2, 8);
-          if (str[0] === '?') {
-            // update nx
-            game.setNx(x);
-          } else if (str[0] === '!') {
-            // place instead
-            game.placeBall(x);
-          }
-        });
+        ws.on('error', console.error);
         ws.on('close', () => console.log(`disconnect <#${pid}>`));
       });
     });
