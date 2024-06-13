@@ -84,7 +84,7 @@ class SuikaMultiplayerServer {
             const rng = Math.floor(Math.random() * (clients.length - 1));
             const target = rng + (rng >= client.getPid() ? 1 : 0);
             if (mergeType >= 4) {
-              const count = 3 + (mergeType - 4);
+              const count = 3 + (mergeType - 4) * 3;
               for (let i = 0; i < count; ++i) {
                 clients[target].game.injectGarbage(mergeType - 4);
               }
