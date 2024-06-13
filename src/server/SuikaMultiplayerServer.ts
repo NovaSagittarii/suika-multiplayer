@@ -65,6 +65,20 @@ class SuikaMultiplayerServer {
         games[pid] = game;
         client.setPid(pid);
 
+        game.on('merge', (mergeType) => {
+          // send damage to another person
+          if (games.length > 1) {
+            // make sure another person exists
+            const rng = Math.floor(Math.random() * (games.length - 1));
+            const target = rng + (rng >= pid ? 1 : 0);
+            if (mergeType >= 4) {
+              for (let i = 0; i < 3; ++i) {
+                games[target].injectGarbage(mergeType - 4);
+              }
+            }
+          }
+        });
+
         ws.on('error', console.error);
         ws.on('close', () => console.log(`disconnect <#${pid}>`));
       });

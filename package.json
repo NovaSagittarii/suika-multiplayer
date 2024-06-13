@@ -7,6 +7,7 @@
   "scripts": {
     "build": "",
     "dev": "tsx watch index.ts",
+    "dev:client": "vite",
     "format": "",
     "start": "",
     "test": "vitest"
@@ -35,13 +36,16 @@
     "ws": "^8.17.0"
   },
   "devDependencies": {
+    "@types/node": "^20.14.2",
     "@types/p5": "^1.7.6",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/ws": "^8.5.10",
     "@vitejs/plugin-react": "^4.3.1",
+    "events": "^3.3.0",
     "prettier": "^3.3.2",
     "tsx": "^4.15.2",
+    "typed-emitter": "^2.1.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.13",
     "vite-plugin-top-level-await": "^1.4.1",

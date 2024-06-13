@@ -1,4 +1,5 @@
 import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_DIAMETER } from '@/constants';
+import SuikaBoard from '@/suika/SuikaBoard';
 import p5 from 'p5';
 
 /**
@@ -15,23 +16,6 @@ function drawBall(p5: p5, x: number, y: number, type: number) {
   p5.text(type, x, y);
 }
 
-interface BoardParameters {
-  /**
-   * Next move position
-   */
-  nx: number;
-
-  /**
-   * Next ball type
-   */
-  nextBall: number;
-
-  /**
-   * List of balls [x, y, type]
-   */
-  balls: [number, number, number][];
-}
-
 /**
  * Draws a board horizontally centered at x=0, top aligned to y=0.
  * @param p5 p5 instance
@@ -39,7 +23,7 @@ interface BoardParameters {
  */
 export default function drawBoard(
   p5: p5,
-  { balls, nextBall, nx }: BoardParameters,
+  [nx, nextBall, balls]: ReturnType<typeof SuikaBoard.deserialize>,
 ) {
   p5.textSize(1.2);
 
@@ -49,8 +33,12 @@ export default function drawBoard(
   p5.fill(0, 10);
   p5.rect(0, BOARD_HEIGHT / 2, BOARD_WIDTH, BOARD_HEIGHT);
 
-  for (const [x, y, t] of balls) {
-    p5.fill(255, 0, 0, 100);
+  for (const [x, y, t, a] of balls) {
+    if (a) {
+      p5.fill(255, 0, 0, 100);
+    } else {
+      p5.fill(0, 100);
+    }
     drawBall(p5, x, -y, t);
   }
 }

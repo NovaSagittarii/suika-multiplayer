@@ -1,3 +1,8 @@
+import { EventEmitter } from 'events';
+// TODO: somehow separate the EventEmitter from node:events from here
+// so that client can call deserialize without needing to have the
+// EventEmitter when it tries to call SuikaBoard.deserialize
+
 import DynamicEntity, { ColliderHandlerMap } from '@/lib/DynamicEntity';
 import Rapier from '@/lib/RapierInstance';
 import Board from '@/suika/Board';
@@ -5,10 +10,21 @@ import Ball from '@/suika/Ball';
 import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_TYPES } from '@/constants';
 import { constrain, encodeRange, hash } from '@/lib/util';
 
+// TODO: fix event typing
+interface SuikaBoardEvents {
+  // Events
+  /**
+   * Called when a merge happens
+   */
+  on(event: 'merge', cb: (mergeType: number) => void): this;
+
+  emit(event: 'merge', mergeType: number): boolean;
+}
+
 /**
  * Represents one full game. This handles the game logic.
  */
-class SuikaBoard {
+class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
   private board: Board;
 
   /**
@@ -39,6 +55,7 @@ class SuikaBoard {
   private rng = 0;
 
   constructor() {
+    super();
     this.board = new Board();
   }
 
@@ -100,6 +117,12 @@ class SuikaBoard {
     this.largestBall = Math.max(this.largestBall, ballType);
   }
 
+  public injectGarbage(ballType: number) {
+    const x = Math.random() * BOARD_WIDTH - BOARD_WIDTH / 2;
+    const y = BOARD_HEIGHT / 2;
+    const newBall = this.board.createBall(x, y, ballType, false);
+  }
+
   /**
    * Merges two balls.
    * @param ball1
@@ -122,6 +145,8 @@ class SuikaBoard {
     const { x, y } = position;
     ball1.dispose();
     ball2.dispose();
+
+    this.emit('merge', type);
 
     // apparently two watermelons disappear
     if (type + 1 < FRUIT_TYPES) {

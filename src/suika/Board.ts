@@ -50,10 +50,17 @@ class Board {
    * @param x position of ball
    * @param y position of ball
    * @param ballType type of ball (indexes into the radius list)
+   * @param radius fixed ball radius (by default will use FRUIT_RADIUS[ballType])
+   * @param active whether this ball *will* have collision
    * @returns ball that was just created
    */
-  public createBall(x: number, y: number, ballType: number) {
-    const ball = new Ball(this.world, x, y, ballType);
+  public createBall(
+    x: number,
+    y: number,
+    ballType: number,
+    active: boolean = true,
+  ) {
+    const ball = new Ball(this.world, x, y, ballType, active);
     this.balls.push(ball);
     return ball;
   }
