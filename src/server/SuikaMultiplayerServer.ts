@@ -29,7 +29,17 @@ class SuikaMultiplayerServer {
     // Run update loop
     setInterval(() => {
       // const t_ = performance.now();
-      for (const game of games) game.stepIfActive();
+      
+      let active = 0;
+      for (const game of games) {
+        game.stepIfActive();
+        if (game.isActive()) ++active;
+      }
+      if (active <= 1 && games.length > 1) {
+        // one player alive and at least 2 players
+        for (const game of games) game.reset();
+      }
+      
       const payload = JSON.stringify(games.map((game) => game.serialize()));
       wss.clients.forEach((ws) => {
         if (ws.readyState === WebSocket.OPEN) {
