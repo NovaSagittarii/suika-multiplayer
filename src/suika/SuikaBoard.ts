@@ -7,7 +7,7 @@ import DynamicEntity, { ColliderHandlerMap } from '@/lib/DynamicEntity';
 import Rapier from '@/lib/RapierInstance';
 import Board from '@/suika/Board';
 import Ball from '@/suika/Ball';
-import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_TYPES } from '@/constants';
+import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_RADIUS, FRUIT_TYPES } from '@/constants';
 import { constrain, encodeRange, hash } from '@/lib/util';
 
 // TODO: fix event typing
@@ -64,6 +64,12 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    */
   private danger = 0;
 
+  /**
+   * The height where garbage gets injects, goes up slightly each time
+   * garbage is injected. Resets after a frame of no garbage injection.
+   */
+  private garbageHeight = BOARD_HEIGHT / 4;
+
   constructor() {
     super();
     this.board = new Board();
@@ -93,6 +99,8 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
     } else {
       this.danger = 0;
     }
+
+    this.garbageHeight = BOARD_HEIGHT / 4;
   }
 
   /**
@@ -145,7 +153,10 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
 
   public injectGarbage(ballType: number) {
     const x = Math.random() * BOARD_WIDTH - BOARD_WIDTH / 2;
-    const y = BOARD_HEIGHT / 2;
+    const spacing = 3;
+    this.garbageHeight += FRUIT_RADIUS[ballType] * spacing;
+    const y = this.garbageHeight;
+    this.garbageHeight += FRUIT_RADIUS[ballType] * spacing;
     const newBall = this.board.createBall(x, y, ballType, false);
   }
 
