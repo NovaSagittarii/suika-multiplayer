@@ -14,7 +14,7 @@ interface SuikaMultiplayerServerConfiguration {}
 class SuikaMultiplayerServer {
   private config: SuikaMultiplayerServerConfiguration;
 
-  constructor(config: SuikaMultiplayerServerConfiguration) {
+  constructor(config: SuikaMultiplayerServerConfiguration = {}) {
     this.config = config;
   }
 
