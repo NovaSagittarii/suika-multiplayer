@@ -13,6 +13,12 @@ interface SuikaMultiplayerServerConfiguration {}
  */
 class SuikaMultiplayerServer {
   private config: SuikaMultiplayerServerConfiguration;
+  
+  /**
+   * Called when shutdown is called.
+   * Should call the resolve of the run promise.
+   */
+  private shutdownCallback: () => void = () => {};
 
   constructor(config: SuikaMultiplayerServerConfiguration = {}) {
     this.config = config;
@@ -21,13 +27,13 @@ class SuikaMultiplayerServer {
   /**
    * Setup the game server. Promise should never resolve -- keeping the server alive.
    * @param wss WebSocketServer to set up listeners on
-   * @returns Nothing upon server shutdown, but this shouldn't happen.
+   * @returns Nothing upon server shutdown.
    */
   public async run(wss: WebSocketServer): Promise<void> {
     const clients: Client[] = [];
 
     // Run update loop
-    setInterval(() => {
+    const updateInterval = setInterval(() => {
       // const t_ = performance.now();
 
       let active = 0;
@@ -57,6 +63,12 @@ class SuikaMultiplayerServer {
     }, 16);
 
     return new Promise((resolve, reject) => {
+      this.shutdownCallback = () => {
+        clearInterval(updateInterval);
+        for (const client of clients) client.game.free();
+        resolve();
+      };
+
       const addr = wss.address();
       if (addr instanceof String) {
         console.log(`starting suika server on <${addr}>`);
@@ -104,6 +116,13 @@ class SuikaMultiplayerServer {
         });
       });
     });
+  }
+
+  /**
+   * Starts shutdown process.
+   */
+  public shutdown() {
+    this.shutdownCallback();
   }
 }
 
