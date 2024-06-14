@@ -2,11 +2,17 @@ import WebSocket, { WebSocketServer, AddressInfo } from 'ws';
 
 import SuikaBoard from '@/suika/SuikaBoard';
 import Client from '@/server/Client';
+import { enumerate } from '@/lib/util';
 
 /**
  * TODO: Used in the future for server configuration.
  */
-interface SuikaMultiplayerServerConfiguration {}
+interface SuikaMultiplayerServerConfiguration {
+  /**
+   * Whether debug messages are printed (console.log)
+   */
+  debug?: boolean;
+}
 
 /**
  * Main class for the entire game server
@@ -37,10 +43,26 @@ class SuikaMultiplayerServer {
       // const t_ = performance.now();
 
       let active = 0;
-      for (const { game } of clients) {
-        game.stepIfActive();
-        if (game.isActive()) ++active;
+      // remove disconnected clients as you enumerate them (so no race)
+      for (const [i, client] of enumerate(clients)) {
+        const { game } = client;
+        if (client.isConnected()) {
+          game.stepIfActive();
+          if (game.isActive()) ++active;
+        } else {
+          // swap with last (minimize reassignment bandwidth cost)
+          // since the last element gets removed, need to check bounds
+          while (i < clients.length && !clients[i].isConnected()) {
+            const prevClient = clients[i];
+            clients[i] = clients[clients.length - 1];
+            clients[i].setPid(i);
+            clients.pop();
+            // clean up yourself
+            prevClient.game.free();
+          }
+        }
       }
+
       if (active <= 1 && clients.length > 1) {
         // one player alive and at least 2 players
         for (const { game } of clients) game.reset();
@@ -71,17 +93,17 @@ class SuikaMultiplayerServer {
 
       const addr = wss.address();
       if (addr instanceof String) {
-        console.log(`starting suika server on <${addr}>`);
+        this.log(`starting suika server on <${addr}>`);
       } else {
         const { address, port } = addr as AddressInfo;
-        console.log(`starting suika server on <[${address}]:${port}>`);
+        this.log(`starting suika server on <[${address}]:${port}>`);
       }
 
       wss.on('connection', (ws: WebSocket, request) => {
         // Create new game instance and notify client about their player ID
         const addr = request.socket.remoteAddress;
         const pid = clients.length;
-        console.log(`new connection from <${addr}> as <#${pid}>`);
+        this.log(`new connection from <${addr}> as <#${pid}>`);
 
         // ws should be OPEN upon connection
         const client = new Client(ws);
@@ -106,13 +128,7 @@ class SuikaMultiplayerServer {
 
         ws.on('error', console.error);
         ws.on('close', () => {
-          console.log(`disconnect <#${pid}>`);
-          // swap with last person
-          clients[pid] = clients[clients.length - 1];
-          clients[pid].setPid(pid);
-          clients.pop();
-          // clean up yourself
-          client?.game.free();
+          this.log(`disconnect <#${pid}>`);
         });
       });
     });
@@ -123,6 +139,15 @@ class SuikaMultiplayerServer {
    */
   public shutdown() {
     this.shutdownCallback();
+  }
+
+  /** 
+   * Log something (does a config.debug check first)
+   */
+  private log(...x: any) {
+    if (this.config.debug) {
+      console.log(...x);
+    }
   }
 }
 

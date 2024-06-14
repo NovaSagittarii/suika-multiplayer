@@ -66,7 +66,7 @@ class Client {
    */
   private send(data: Parameters<typeof WebSocket.prototype.send>[0]) {
     // TODO: do checks on this.ws.bufferedAmount
-    if (this.ws.readyState === WebSocket.OPEN) {
+    if (this.isConnected()) {
       this.ws.send(data);
     }
   }
@@ -76,6 +76,15 @@ class Client {
    */
   private free() {
     this.game.free();
+  }
+
+  /**
+   * Used to determine when to cull a client. This assumes clients are
+   * already connected the moment the server acknowledges them.
+   * @returns Whether the websocket is still open
+   */
+  public isConnected() {
+    return this.ws.readyState === WebSocket.OPEN;
   }
 }
 

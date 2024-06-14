@@ -49,9 +49,9 @@ export function decodeFraction(xy: number, y: number) {
 
 /**
  * maps a number x in the range [lo, hi] with k-bit resolution
- * @param x 
- * @param lo 
- * @param hi 
+ * @param x
+ * @param lo
+ * @param hi
  * @param k
  * @returns k-bit resolution representation of x
  */
@@ -62,12 +62,39 @@ export function encodeRange(x: number, lo: number, hi: number, k: number) {
 
 /**
  * maps an integer with k-bit resolution back into the range [lo, hi]
- * @param x 
- * @param lo 
- * @param hi 
- * @param k 
+ * @param x
+ * @param lo
+ * @param hi
+ * @param k
  * @returns (x / (1<<k)) * (hi - lo) + lo
  */
 export function decodeRange(x: number, lo: number, hi: number, k: number) {
   return (x / (1 << k)) * (hi - lo) + lo;
+}
+
+/**
+ * Maps a[i] to [i, a[i]]. You **can** mutate the array, but
+ * the index won't change, and it'll continue until the end.
+ * @param arr Array to enumerate
+ */
+export function* enumerate<T>(arr: T[]) {
+  for (let i = 0; i < arr.length; ++i) {
+    yield [i, arr[i]] as [number, T];
+  }
+}
+
+/**
+ * Returns a shuffled view of the array. Please don't modify the array.
+ * @param arr Array to shuffle
+ */
+export function* shuffled<T>(arr: T[]) {
+  const n = arr.length;
+  const order = new Array(n).fill(0).map((_, i) => i);
+  for (let i = 1; i < n; ++i) {
+    const j = Math.floor(Math.random() * i);
+    const temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+  for (const i of order) yield arr[i];
 }

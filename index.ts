@@ -23,7 +23,9 @@ const wss = new WebSocketServer({
     // should not be compressed if context takeover is disabled.
   },
 });
-const server = new SuikaMultiplayerServer({});
+const server = new SuikaMultiplayerServer({
+  debug: true,
+});
 
 // run forever
 server.run(wss).then(console.log);
