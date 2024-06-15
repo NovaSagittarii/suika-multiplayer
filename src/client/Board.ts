@@ -4,6 +4,7 @@ import {
   FRUIT_DIAMETER,
   FRUIT_RADIUS,
 } from '@/constants';
+import { constrain } from '@/lib/util';
 import SuikaBoard from '@/suika/SuikaBoard';
 import p5 from 'p5';
 
@@ -41,6 +42,10 @@ export default function drawBoard(
   [nx, nextBall, balls, danger]: ReturnType<typeof SuikaBoard.deserialize>,
   extra: boolean = false,
 ) {
+  // constrain nx here (has to be done *somewhere*, but this works for now)
+  const R = FRUIT_RADIUS[nextBall];
+  nx = constrain(nx, -BOARD_WIDTH / 2 + R, BOARD_WIDTH / 2 - R);
+
   p5.textSize(1.2);
 
   p5.fill(0, 255, 0, 100);
