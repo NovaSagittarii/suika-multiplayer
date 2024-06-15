@@ -151,13 +151,31 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
     this.largestBall = Math.max(this.largestBall, ballType);
   }
 
+  /**
+   * Adds a garbage ball of type `ballType` (which determines radius) onto
+   * the board high and at a random horizontal position. Each subsequent call
+   * (within a frame) will place it higher and higher up.
+   * @param ballType 
+   */
   public injectGarbage(ballType: number) {
     const x = Math.random() * BOARD_WIDTH - BOARD_WIDTH / 2;
     const spacing = 3;
     this.garbageHeight += FRUIT_RADIUS[ballType] * spacing;
     const y = this.garbageHeight;
     this.garbageHeight += FRUIT_RADIUS[ballType] * spacing;
-    const newBall = this.board.createBall(x, y, ballType, false);
+    this.createGarbage(x, y, ballType);
+  }
+
+  /**
+   * Similar to `createBall`, but creates garbage instead at the specified
+   * location. It doesn't set up colliders yet since it isn't needed, but
+   * this might be useful in the future.
+   * @param x 
+   * @param y 
+   * @param ballType 
+   */
+  public createGarbage(x: number, y: number, ballType: number) {
+    this.board.createBall(x, y, ballType, false);
   }
 
   /**
@@ -172,7 +190,7 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
           `Got ${ball1.type} and ${ball2.type}`,
       );
     }
-    const { type } = ball1;
+    const { type, radius } = ball1;
 
     // The higher ball falls into and merges with the lower ball.
     const position =
@@ -185,9 +203,30 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
 
     this.emit('merge', type);
 
+    // handle garbage clearing
+    this.clearNearbyGarbage(x, y, radius);
+
     // apparently two watermelons disappear
     if (type + 1 < FRUIT_TYPES) {
       this.createBall(x, y, type + 1);
+    }
+  }
+
+  /**
+   * Clears garbage that overlaps with the circle at (`cx`, `cy`)
+   * with radius `radius`
+   * @param cx
+   * @param cy 
+   * @param radius 
+   */
+  public clearNearbyGarbage(cx: number, cy: number, radius: number) {
+    for (const ball of this.getBalls()) {
+      if (!ball.active) {
+        const { x, y } = ball.translation();
+        if (Math.hypot(cx - x, cy - y) <= radius + ball.radius) {
+          ball.dispose();
+        }
+      }
     }
   }
 
