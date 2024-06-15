@@ -45,6 +45,7 @@ const sketch = (p5: P5) => {
    */
   let mp = false;
   p5.mousePressed = () => (mp = true);
+  p5.touchEnded = p5.mousePressed; // on mobile release, drop
 
   p5.draw = () => {
     const { mouseX, mouseY } = p5;
