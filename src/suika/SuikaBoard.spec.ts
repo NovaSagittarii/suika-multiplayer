@@ -9,4 +9,5 @@ test('balls merge when over each other', () => {
   expect(game.getBalls().length).toBe(2);
   game.step();
   expect(game.getBalls().length).toBe(1);
+  game.free();
 });

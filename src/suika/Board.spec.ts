@@ -15,6 +15,7 @@ test('balls fall due to gravity', () => {
   world.step();
   expect(ball.translation().x).toBe(0);
   expect(ball.translation().y).not.toBe(0);
+  world.free();
 });
 
 test('balls fall and then fall to opposite sides', () => {
@@ -33,4 +34,5 @@ test('balls fall and then fall to opposite sides', () => {
 
   expect(a.translation().x).toBeLessThan(0);
   expect(b.translation().x).toBeGreaterThan(0.1);
+  board.free();
 });
