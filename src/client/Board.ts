@@ -1,4 +1,9 @@
-import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_DIAMETER, FRUIT_RADIUS } from '@/constants';
+import {
+  BOARD_HEIGHT,
+  BOARD_WIDTH,
+  FRUIT_DIAMETER,
+  FRUIT_RADIUS,
+} from '@/constants';
 import SuikaBoard from '@/suika/SuikaBoard';
 import p5 from 'p5';
 
@@ -69,7 +74,7 @@ export default function drawBoard(
         // x is fixed, solve for y
         // y^2 = r^2 - x^2
         // but only care about the higher one
-        const iy = -y - Math.sqrt(r*r - dx*dx) - R;
+        const iy = -y - Math.sqrt(r * r - dx * dx) - R;
         h = Math.min(h, iy);
       }
     }
@@ -78,7 +83,7 @@ export default function drawBoard(
     p5.stroke(0, 40);
     p5.strokeWeight(0.1);
     p5.line(nx, 0, nx, h);
-    p5.ellipse(nx, h, R*2, R*2);
+    p5.ellipse(nx, h, R * 2, R * 2);
     p5.pop();
   }
 }
