@@ -98,3 +98,12 @@ export function* shuffled<T>(arr: T[]) {
   }
   for (const i of order) yield arr[i];
 }
+
+/**
+ * Returns a random selection from the array.
+ * @param arr 
+ */
+export function choice<T>(arr: T[]) {
+  const n = arr.length;
+  return arr[Math.floor(n * Math.random())];
+}

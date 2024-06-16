@@ -2,7 +2,7 @@ import WebSocket, { WebSocketServer, AddressInfo } from 'ws';
 
 import SuikaBoard from '@/suika/SuikaBoard';
 import Client from '@/server/Client';
-import { enumerate } from '@/lib/util';
+import { choice, enumerate } from '@/lib/util';
 
 /**
  * TODO: Used in the future for server configuration.
@@ -121,12 +121,11 @@ class SuikaMultiplayerServer {
           // send damage to another person
           if (clients.length > 1) {
             // make sure another person exists
-            const rng = Math.floor(Math.random() * (clients.length - 1));
-            const target = rng + (rng >= client.getPid() ? 1 : 0);
-            if (mergeType >= 4) {
+            const target = this.findTarget(client);
+            if (mergeType >= 4 && target) {
               const count = 3 + (mergeType - 4) * 3;
               for (let i = 0; i < count; ++i) {
-                clients[target].game.injectGarbage(mergeType - 4);
+                target.game.injectGarbage(mergeType - 4);
               }
             }
           }
@@ -154,6 +153,26 @@ class SuikaMultiplayerServer {
     if (this.config.debug) {
       console.log(...x);
     }
+  }
+
+  /**
+   * Find a target for someone trying to send
+   * @param source the client who is sending
+   * @returns a client who is alive and isn't the same as the source, or `null`
+   * if there is no suitable client
+   */
+  protected findTarget(source: Client): Client | null {
+    let candidates = [];
+    for (const client of this.clients) {
+      if (client === source) continue;
+      if (client.game.isActive()) {
+        candidates.push(client);
+      }
+    }
+    if (candidates.length) {
+      return choice(candidates);
+    }
+    return null;
   }
 }
 
