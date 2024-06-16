@@ -26,6 +26,12 @@ class SuikaMultiplayerServer {
    */
   private shutdownCallback: () => void = () => {};
 
+  /**
+   * List of clients that are connected.
+   * TODO: move into a Room
+   */
+  private clients: Client[] = [];
+
   constructor(config: SuikaMultiplayerServerConfiguration = {}) {
     this.config = config;
   }
@@ -36,7 +42,7 @@ class SuikaMultiplayerServer {
    * @returns Nothing upon server shutdown.
    */
   public async run(wss: WebSocketServer): Promise<void> {
-    const clients: Client[] = [];
+    const clients = this.clients;
 
     // Run update loop
     const updateInterval = setInterval(() => {
