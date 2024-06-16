@@ -31,8 +31,8 @@ export default class Ball extends DynamicEntity {
     const radius = FRUIT_RADIUS[type];
     const rigidBodyDesc = Rapier.RigidBodyDesc.dynamic().setTranslation(x, y);
     const colliderDesc = Rapier.ColliderDesc.ball(radius)
-      .setFriction(0.5)
-      .setRestitution(0.1)
+      .setFriction(0.9)
+      .setRestitution(0)
       .setActiveEvents(Rapier.ActiveEvents.COLLISION_EVENTS)
       .setActiveCollisionTypes(Rapier.ActiveCollisionTypes.DEFAULT);
     super(world, rigidBodyDesc, colliderDesc);
