@@ -7,7 +7,12 @@ import DynamicEntity, { ColliderHandlerMap } from '@/lib/DynamicEntity';
 import Rapier from '@/lib/RapierInstance';
 import Board from '@/suika/Board';
 import Ball from '@/suika/Ball';
-import { BOARD_HEIGHT, BOARD_WIDTH, FRUIT_RADIUS, FRUIT_TYPES } from '@/constants';
+import {
+  BOARD_HEIGHT,
+  BOARD_WIDTH,
+  FRUIT_RADIUS,
+  FRUIT_TYPES,
+} from '@/constants';
 import { constrain, encodeRange, hash } from '@/lib/util';
 
 // TODO: fix event typing
@@ -65,6 +70,11 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
   private danger = 0;
 
   /**
+   * Frames since last fruit placement.
+   */
+  private cooldown = 0;
+
+  /**
    * The height where garbage gets injects, goes up slightly each time
    * garbage is injected. Resets after a frame of no garbage injection.
    */
@@ -90,6 +100,11 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
         this.merge(o1, o2);
       }
     });
+
+    if (this.active) {
+      // you can place as long as you aren't dead
+      ++this.cooldown;
+    }
 
     if (!this.isAlive()) {
       ++this.danger;
@@ -133,6 +148,10 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    * @param x position
    */
   public placeBall(x: number) {
+    // cooldown check
+    if (this.cooldown < 20) return;
+    this.cooldown = 0;
+
     this.setNx(x);
     this.createBall(x, 0, this.getNext());
     this.rng = hash(this.rng);
@@ -155,7 +174,7 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    * Adds a garbage ball of type `ballType` (which determines radius) onto
    * the board high and at a random horizontal position. Each subsequent call
    * (within a frame) will place it higher and higher up.
-   * @param ballType 
+   * @param ballType
    */
   public injectGarbage(ballType: number) {
     const x = Math.random() * BOARD_WIDTH - BOARD_WIDTH / 2;
@@ -170,9 +189,9 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    * Similar to `createBall`, but creates garbage instead at the specified
    * location. It doesn't set up colliders yet since it isn't needed, but
    * this might be useful in the future.
-   * @param x 
-   * @param y 
-   * @param ballType 
+   * @param x
+   * @param y
+   * @param ballType
    */
   public createGarbage(x: number, y: number, ballType: number) {
     this.board.createBall(x, y, ballType, false);
@@ -216,8 +235,8 @@ class SuikaBoard extends EventEmitter implements SuikaBoardEvents {
    * Clears garbage that overlaps with the circle at (`cx`, `cy`)
    * with radius `radius`
    * @param cx
-   * @param cy 
-   * @param radius 
+   * @param cy
+   * @param radius
    */
   public clearNearbyGarbage(cx: number, cy: number, radius: number) {
     for (const ball of this.getBalls()) {
